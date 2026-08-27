@@ -7,7 +7,7 @@
   <meta name="description" content="Elleven bouwt supersnelle websites en slimme automatisering voor lokale bedrijven in Antwerpen. Strak design, schone code, mobiel-eerst. Vraag een gratis preview aan." />
   <meta name="keywords" content="webdesigner Antwerpen, website laten maken Antwerpen, automatisering, freelance webdesign, WhatsApp booking, Supabase" />
   <meta name="author" content="Elleven" />
-  <meta name="theme-color" content="#05070a" />
+  <meta name="theme-color" content="#000000" />
   <link rel="canonical" href="https://www.elleven.be/" />
 
   <!-- Open Graph / Social -->
@@ -21,12 +21,12 @@
   <meta name="twitter:description" content="Supersnelle websites & slimme automatisering voor lokale bedrijven in Antwerpen." />
 
   <!-- Favicon (inline SVG, geen extern bestand nodig) -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2305070a'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Arial, sans-serif' font-weight='700' fill='%2339ff9e' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23000000'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Arial, sans-serif' font-weight='700' fill='%2339ff9e' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS (Play CDN — voor productie: compileer Tailwind lokaal voor een kleinere bundel) -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,21 +35,21 @@
       theme: {
         extend: {
           colors: {
-            bg: "#05070a",
-            surface: "#0b0f14",
-            surface2: "#10151c",
-            line: "#1c232c",
+            bg: "#000000",
+            surface: "#1c1c1e",
+            surface2: "#2c2c2e",
+            line: "rgba(255,255,255,0.12)",
             neon: "#39ff9e",
             cyan: "#22d3ee",
-            muted: "#8b95a1",
+            muted: "#86868b",
           },
           fontFamily: {
-            heading: ["Space Grotesk", "system-ui", "sans-serif"],
-            body: ["Inter", "system-ui", "sans-serif"],
+            heading: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Inter", "system-ui", "sans-serif"],
+            body: ["-apple-system", "BlinkMacSystemFont", "SF Pro Text", "Inter", "system-ui", "sans-serif"],
           },
           boxShadow: {
-            glow: "0 0 40px -8px rgba(57,255,158,0.35)",
-            "glow-sm": "0 0 20px -6px rgba(57,255,158,0.45)",
+            glow: "0 0 30px -10px rgba(57,255,158,0.28)",
+            "glow-sm": "0 0 16px -6px rgba(57,255,158,0.32)",
           },
         },
       },
@@ -76,16 +76,20 @@
 
   <style>
     html { scrollbar-gutter: stable; }
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    h1, h2, h3, .font-heading { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif; }
+    h1, h2, h3, .font-heading { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif; }
 
-    ::selection { background: #39ff9e; color: #05070a; }
+    ::selection { background: #39ff9e; color: #000000; }
 
     /* Dunne, donkere scrollbar */
     ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: #05070a; }
-    ::-webkit-scrollbar-thumb { background: #1c232c; border-radius: 8px; }
-    ::-webkit-scrollbar-thumb:hover { background: #2a333e; }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.26); }
+
+    /* Zachte tik-feedback op alle pilvormige knoppen/badges, zoals iOS/macOS-controls */
+    .rounded-full { transition: transform .15s ease, opacity .15s ease; }
+    .rounded-full:active { transform: scale(0.97); }
 
     /* Scroll-reveal animatie */
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
@@ -95,12 +99,44 @@
     .reveal.d3 { transition-delay: .24s; }
     .reveal.d4 { transition-delay: .32s; }
 
-    /* Gradient tekst */
+    /* Holografische, licht bewegende gradient-tekst */
     .text-gradient {
-      background: linear-gradient(90deg, #39ff9e 0%, #22d3ee 100%);
+      background: linear-gradient(100deg, #39ff9e 0%, #22d3ee 50%, #39ff9e 100%);
+      background-size: 300% 100%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      animation: shimmer 10s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Vignette: donkere randen voor diepte, laat het middelste vlak (waar de content leest) met rust */
+    .vignette {
+      background: radial-gradient(ellipse 80% 65% at 50% 35%, transparent 45%, rgba(0,0,0,0.55) 100%);
+    }
+
+    /* Aurora-nevels: zachte, langzaam driftende gekleurde gloed-vlekken (galaxy-sfeer) */
+    .aurora { position: absolute; border-radius: 9999px; filter: blur(105px); mix-blend-mode: screen; opacity: 0.62; }
+    .aurora-a { top: -12%; left: -10%; width: 44rem; height: 44rem; background: radial-gradient(circle at 30% 30%, rgba(57,255,158,0.55), transparent 70%); animation: driftA 28s ease-in-out infinite alternate; }
+    .aurora-b { top: 2%; right: -14%; width: 38rem; height: 38rem; background: radial-gradient(circle at 60% 40%, rgba(139,92,246,0.5), transparent 70%); animation: driftB 34s ease-in-out infinite alternate; }
+    .aurora-c { bottom: -18%; left: 6%; width: 40rem; height: 40rem; background: radial-gradient(circle at 50% 50%, rgba(34,211,238,0.4), transparent 70%); animation: driftC 31s ease-in-out infinite alternate; }
+    .aurora-d { bottom: -10%; right: 2%; width: 32rem; height: 32rem; background: radial-gradient(circle at 50% 50%, rgba(244,114,182,0.38), transparent 70%); animation: driftD 25s ease-in-out infinite alternate; }
+    @keyframes driftA { from { transform: translate(0,0) scale(1); } to { transform: translate(6%,8%) scale(1.12); } }
+    @keyframes driftB { from { transform: translate(0,0) scale(1); } to { transform: translate(-8%,6%) scale(1.06); } }
+    @keyframes driftC { from { transform: translate(0,0) scale(1); } to { transform: translate(5%,-7%) scale(1.1); } }
+    @keyframes driftD { from { transform: translate(0,0) scale(1); } to { transform: translate(-6%,-9%) scale(1.14); } }
+
+    /* Glasspanelen: subtiel vlak licht + gefrost-glass effect */
+    .glass {
+      background: rgba(255,255,255,0.035);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
     /* Subtiel grid-patroon op achtergrond */
@@ -113,8 +149,12 @@
       mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
     }
 
-    .card-hover { transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
-    .card-hover:hover { transform: translateY(-4px); border-color: rgba(57,255,158,0.45); box-shadow: 0 0 40px -8px rgba(57,255,158,0.25); }
+    .card-hover { transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .35s ease, box-shadow .35s ease; }
+    .card-hover:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,0.22);
+      box-shadow: 0 30px 70px -24px rgba(0,0,0,0.7), 0 0 50px -20px rgba(57,255,158,0.25), 0 0 80px -30px rgba(34,211,238,0.2);
+    }
 
     @media (prefers-reduced-motion: reduce) {
       .reveal { transition: none; opacity: 1; transform: none; }
@@ -125,12 +165,22 @@
 
 <body class="bg-bg text-slate-200 antialiased selection:bg-neon selection:text-bg">
 
+  <!-- Galaxy-achtergrond: drijvende aurora-nevels (CSS) + sterrenveld/datapunten (canvas) -->
+  <div class="fixed inset-0 -z-20 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="aurora aurora-a"></div>
+    <div class="aurora aurora-b"></div>
+    <div class="aurora aurora-c"></div>
+    <div class="aurora aurora-d"></div>
+    <div class="absolute inset-0 vignette"></div>
+  </div>
+  <canvas id="bg-canvas" class="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true"></canvas>
+
   <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-neon focus:text-bg focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold">
     Ga naar inhoud
   </a>
 
   <!-- ============ NAVBAR ============ -->
-  <header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b border-transparent">
+  <header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-xl bg-white/[0.03] border-b border-white/[0.06]">
     <nav class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
       <a href="#hero" class="flex items-center gap-2 font-heading font-semibold text-lg tracking-tight text-white">
         <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-surface2 border border-line text-neon">E</span>
@@ -145,7 +195,7 @@
       </div>
 
       <div class="hidden md:block">
-        <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-neon text-bg text-sm font-semibold px-5 py-2.5 hover:shadow-glow transition-shadow">
+        <a href="#contact" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg text-sm font-semibold px-5 py-2.5 hover:shadow-glow transition-shadow">
           Gratis preview aanvragen
         </a>
       </div>
@@ -157,26 +207,26 @@
     </nav>
 
     <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden md:hidden border-t border-line bg-bg/95 backdrop-blur">
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-black/70 backdrop-blur-2xl">
       <div class="px-5 py-4 flex flex-col gap-1 text-sm">
         <a href="#diensten" class="mobile-link px-2 py-3 rounded-lg hover:bg-surface text-slate-200">Diensten</a>
         <a href="#waarom" class="mobile-link px-2 py-3 rounded-lg hover:bg-surface text-slate-200">Waarom ik</a>
         <a href="#werkwijze" class="mobile-link px-2 py-3 rounded-lg hover:bg-surface text-slate-200">Werkwijze</a>
         <a href="#contact" class="mobile-link px-2 py-3 rounded-lg hover:bg-surface text-slate-200">Contact</a>
-        <a href="#contact" class="mobile-link mt-2 text-center rounded-full bg-neon text-bg font-semibold px-5 py-3">Gratis preview aanvragen</a>
+        <a href="#contact" class="mobile-link mt-2 text-center rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg font-semibold px-5 py-3">Gratis preview aanvragen</a>
       </div>
     </div>
   </header>
 
   <main id="main">
     <!-- ============ HERO ============ -->
-    <section id="hero" class="relative overflow-hidden pt-36 pb-24 sm:pt-44 sm:pb-32">
+    <section id="hero" class="relative overflow-hidden pt-40 pb-28 sm:pt-56 sm:pb-40">
       <div class="absolute inset-0 bg-grid pointer-events-none"></div>
-      <div class="absolute -top-40 left-1/2 -translate-x-1/2 h-[32rem] w-[32rem] rounded-full bg-neon/20 blur-[120px] pointer-events-none"></div>
-      <div class="absolute top-40 right-0 h-72 w-72 rounded-full bg-cyan/10 blur-[110px] pointer-events-none"></div>
+      <div class="absolute -top-40 left-1/2 -translate-x-1/2 h-[32rem] w-[32rem] rounded-full bg-neon/10 blur-[130px] pointer-events-none"></div>
+      <div class="absolute top-40 right-0 h-72 w-72 rounded-full bg-cyan/6 blur-[120px] pointer-events-none"></div>
 
       <div class="relative max-w-5xl mx-auto px-5 sm:px-8 text-center">
-        <div class="reveal inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-4 py-1.5 text-xs text-muted mb-8">
+        <div class="reveal inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs text-muted mb-8">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-60"></span>
             <span class="relative inline-flex h-2 w-2 rounded-full bg-neon"></span>
@@ -184,18 +234,19 @@
           Antwerpen &middot; beschikbaar voor nieuwe projecten
         </div>
 
-        <h1 class="reveal d1 font-heading text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.1] tracking-tight text-white">
+        <h1 class="reveal d1 font-heading text-5xl sm:text-6xl md:text-7xl font-semibold leading-[1.04] tracking-tight text-white">
           <span class="text-gradient">Supersnelle websites</span> &amp; slimme
           <span class="text-gradient">automatisering</span> voor lokale bedrijven in Antwerpen.
         </h1>
 
-        <p class="reveal d2 mt-6 text-base sm:text-lg text-muted max-w-2xl mx-auto leading-relaxed">
+        <p class="reveal d2 mt-7 text-lg sm:text-xl text-muted max-w-2xl mx-auto leading-relaxed">
           Ik combineer modern webdesign met slimme technologie: strakke, razendsnelle websites die
-          overtuigen &eacute;n automatisering die je écht tijd bespaart. Geen overbodige poespas — gewoon resultaat.
+          overtuigen, aangevuld met automatisering die u aantoonbaar tijd bespaart. Functioneel en
+          resultaatgericht, zonder overbodige toevoegingen.
         </p>
 
         <div class="reveal d3 mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="#diensten" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-neon text-bg font-semibold px-7 py-3.5 hover:shadow-glow transition-shadow">
+          <a href="#diensten" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg font-semibold px-7 py-3.5 hover:shadow-glow transition-shadow">
             Bekijk diensten
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -205,15 +256,15 @@
         </div>
 
         <div class="reveal d4 mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto text-left">
-          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface/60 px-4 py-3.5">
+          <div class="flex items-center gap-3 rounded-xl glass px-4 py-3.5">
             <svg class="h-5 w-5 text-neon shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"/></svg>
             <span class="text-sm text-slate-300">&lt; 1 sec. laadtijd</span>
           </div>
-          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface/60 px-4 py-3.5">
+          <div class="flex items-center gap-3 rounded-xl glass px-4 py-3.5">
             <svg class="h-5 w-5 text-neon shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
             <span class="text-sm text-slate-300">100% mobile-first</span>
           </div>
-          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface/60 px-4 py-3.5">
+          <div class="flex items-center gap-3 rounded-xl glass px-4 py-3.5">
             <svg class="h-5 w-5 text-neon shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/></svg>
             <span class="text-sm text-slate-300">Rechtstreeks contact, geen tussenpersonen</span>
           </div>
@@ -222,36 +273,38 @@
     </section>
 
     <!-- ============ OVER MIJ ============ -->
-    <section id="over-mij" class="py-20 sm:py-28 border-t border-line">
-      <div class="max-w-6xl mx-auto px-5 sm:px-8 grid md:grid-cols-5 gap-12 items-start">
+    <section id="over-mij" class="relative overflow-hidden py-24 sm:py-36 border-t border-line">
+      <div class="absolute top-0 left-0 h-96 w-96 rounded-full bg-neon/[0.06] blur-[120px] pointer-events-none"></div>
+      <div class="relative max-w-6xl mx-auto px-5 sm:px-8 grid md:grid-cols-5 gap-12 items-start">
         <div class="reveal md:col-span-2">
-          <span class="text-xs font-semibold tracking-widest text-neon uppercase">Over mij</span>
-          <h2 class="mt-3 font-heading text-3xl sm:text-4xl font-semibold text-white leading-tight">
-            Techneut met een no-nonsense aanpak.
+          <span class="text-xs font-semibold tracking-widest text-muted uppercase">Over mij</span>
+          <h2 class="mt-3 font-heading text-4xl sm:text-5xl font-semibold text-white tracking-tight leading-tight">
+            Technische expertise, gericht op resultaat.
           </h2>
         </div>
 
         <div class="reveal d1 md:col-span-3 space-y-6">
           <p class="text-muted leading-relaxed">
-            Ik ben Elvedin — freelance webdesigner en automatiseringsspecialist uit Antwerpen. Technologie fascineert me,
-            vooral hoe ze processen kan versnellen. Dat vertaal ik naar websites die niet alleen mooi ogen, maar ook
-            razendsnel laden en écht converteren.
+            Mijn naam is Elvedin, freelance webdesigner en automatiseringsspecialist uit Antwerpen. Ik ben
+            gespecialiseerd in het versnellen van bedrijfsprocessen met technologie, en vertaal dit naar
+            websites die niet alleen visueel aantrekkelijk zijn, maar ook razendsnel laden en daadwerkelijk
+            converteren.
           </p>
           <p class="text-muted leading-relaxed">
-            Geen eindeloze vergaderingen, geen vage rapporten. Ik lever wat ik beloof, op tijd, en met code waar je
-            op kan bouwen — vandaag én over drie jaar.
+            Geen langdurige vergaderingen of vrijblijvende rapportages. Ik lever wat is afgesproken, op tijd,
+            en met code waarop u kunt vertrouwen — vandaag én over drie jaar.
           </p>
 
           <div class="grid sm:grid-cols-3 gap-3 pt-2">
-            <div class="rounded-xl border border-line bg-surface/60 px-4 py-4">
+            <div class="rounded-xl glass px-4 py-4">
               <p class="text-sm font-semibold text-white">Focus</p>
               <p class="text-sm text-muted mt-1">Snelheid &amp; resultaat</p>
             </div>
-            <div class="rounded-xl border border-line bg-surface/60 px-4 py-4">
+            <div class="rounded-xl glass px-4 py-4">
               <p class="text-sm font-semibold text-white">Aanpak</p>
-              <p class="text-sm text-muted mt-1">Direct &amp; no-nonsense</p>
+              <p class="text-sm text-muted mt-1">Direct &amp; doeltreffend</p>
             </div>
-            <div class="rounded-xl border border-line bg-surface/60 px-4 py-4">
+            <div class="rounded-xl glass px-4 py-4">
               <p class="text-sm font-semibold text-white">Specialisatie</p>
               <p class="text-sm text-muted mt-1">Webdesign + automatisering</p>
             </div>
@@ -261,17 +314,18 @@
     </section>
 
     <!-- ============ DIENSTEN & PAKKETTEN ============ -->
-    <section id="diensten" class="py-20 sm:py-28 border-t border-line">
-      <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <section id="diensten" class="relative overflow-hidden py-24 sm:py-36 border-t border-line">
+      <div class="absolute top-1/3 left-1/2 -translate-x-1/2 h-[36rem] w-[36rem] rounded-full bg-cyan/[0.06] blur-[130px] pointer-events-none"></div>
+      <div class="relative max-w-6xl mx-auto px-5 sm:px-8">
         <div class="reveal text-center max-w-2xl mx-auto">
-          <span class="text-xs font-semibold tracking-widest text-neon uppercase">Diensten &amp; pakketten</span>
-          <h2 class="mt-3 font-heading text-3xl sm:text-4xl font-semibold text-white">Kies het pakket dat past bij jouw bedrijf</h2>
+          <span class="text-xs font-semibold tracking-widest text-muted uppercase">Diensten &amp; pakketten</span>
+          <h2 class="mt-3 font-heading text-4xl sm:text-5xl font-semibold text-white tracking-tight">Kies het pakket dat aansluit bij uw bedrijf</h2>
           <p class="mt-4 text-muted">Vaste, transparante prijzen. Geen verborgen kosten, geen verrassingen achteraf.</p>
         </div>
 
         <div class="mt-14 grid md:grid-cols-3 gap-6 items-stretch">
           <!-- Basic -->
-          <div class="reveal card-hover rounded-2xl border border-line bg-surface/60 p-7 flex flex-col">
+          <div class="reveal card-hover rounded-[28px] glass p-7 flex flex-col">
             <p class="text-sm font-semibold text-cyan">Basic</p>
             <p class="mt-2 text-xs text-muted">Voor starters &amp; lokale zaken</p>
             <div class="mt-5 flex items-baseline gap-1.5">
@@ -293,8 +347,8 @@
           </div>
 
           <!-- Professional (featured) -->
-          <div class="reveal d1 card-hover relative rounded-2xl border border-neon/50 bg-surface2 p-7 flex flex-col shadow-glow md:-translate-y-3">
-            <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-neon text-bg text-xs font-semibold px-4 py-1.5 whitespace-nowrap">Meest gekozen</span>
+          <div class="reveal d1 card-hover relative rounded-[28px] border border-neon/40 bg-gradient-to-b from-white/[0.07] to-white/[0.02] backdrop-blur-xl p-7 flex flex-col shadow-[0_0_50px_-15px_rgba(57,255,158,0.35),0_0_90px_-30px_rgba(34,211,238,0.3)] md:-translate-y-3">
+            <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg text-xs font-semibold px-4 py-1.5 whitespace-nowrap">Meest gekozen</span>
             <p class="text-sm font-semibold text-neon">Professional</p>
             <p class="mt-2 text-xs text-muted">Voor groeiende bedrijven</p>
             <div class="mt-5 flex items-baseline gap-1.5">
@@ -312,18 +366,18 @@
               <li class="flex gap-2.5"><svg class="h-5 w-5 text-neon shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Hosting &amp; updates inbegrepen</li>
             </ul>
 
-            <a href="#contact" class="mt-8 inline-flex items-center justify-center rounded-full bg-neon text-bg font-semibold px-5 py-3 hover:shadow-glow transition-shadow">Kies Professional</a>
+            <a href="#contact" class="mt-8 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg font-semibold px-5 py-3 hover:shadow-glow transition-shadow">Kies Professional</a>
           </div>
 
           <!-- Enterprise -->
-          <div class="reveal d2 card-hover rounded-2xl border border-line bg-surface/60 p-7 flex flex-col">
+          <div class="reveal d2 card-hover rounded-[28px] glass p-7 flex flex-col">
             <p class="text-sm font-semibold text-cyan">Enterprise / Custom</p>
             <p class="mt-2 text-xs text-muted">Maatwerk &amp; automatisering</p>
             <div class="mt-5 flex items-baseline gap-1.5">
               <span class="font-heading text-4xl font-semibold text-white">Vanaf &euro;2.200</span>
             </div>
             <p class="text-xs text-muted mt-1">+ &euro;120/maand onderhoud</p>
-            <p class="mt-5 text-sm text-muted leading-relaxed">Volledig maatwerk, inclusief Supabase-databasekoppeling of automatisering van jouw bedrijfsprocessen.</p>
+            <p class="mt-5 text-sm text-muted leading-relaxed">Volledig maatwerk, inclusief Supabase-databasekoppeling of automatisering van uw bedrijfsprocessen.</p>
 
             <ul class="mt-6 space-y-3 text-sm text-slate-300 flex-1">
               <li class="flex gap-2.5"><svg class="h-5 w-5 text-neon shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Volledig maatwerk ontwerp &amp; functionaliteit</li>
@@ -339,107 +393,154 @@
         </div>
 
         <p class="reveal d3 mt-8 text-center text-xs text-muted max-w-xl mx-auto">
-          * Richtprijzen, exclusief btw. Na een kort en vrijblijvend gesprek ontvang je een vast voorstel op maat.
+          * Richtprijzen, exclusief btw. Na een kort en vrijblijvend gesprek ontvangt u een vast voorstel op maat.
         </p>
       </div>
     </section>
 
     <!-- ============ WAAROM KIEZEN VOOR MIJ ============ -->
-    <section id="waarom" class="py-20 sm:py-28 border-t border-line">
-      <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <section id="waarom" class="relative overflow-hidden py-24 sm:py-36 border-t border-line">
+      <div class="absolute -top-20 right-0 h-[30rem] w-[30rem] rounded-full bg-cyan/[0.07] blur-[130px] pointer-events-none"></div>
+      <div class="relative max-w-6xl mx-auto px-5 sm:px-8">
         <div class="reveal text-center max-w-2xl mx-auto">
-          <span class="text-xs font-semibold tracking-widest text-neon uppercase">Waarom kiezen voor mij</span>
-          <h2 class="mt-3 font-heading text-3xl sm:text-4xl font-semibold text-white">Geen agency-poespas. Wel resultaat.</h2>
+          <span class="text-xs font-semibold tracking-widest text-muted uppercase">Waarom kiezen voor mij</span>
+          <h2 class="mt-3 font-heading text-4xl sm:text-5xl font-semibold text-white tracking-tight">Geen overbodige toevoegingen. Wel resultaat.</h2>
         </div>
 
-        <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="reveal rounded-2xl border border-line bg-surface/60 p-6">
-            <div class="h-11 w-11 rounded-xl bg-neon/10 text-neon flex items-center justify-center">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>
+        <!-- Bento grid: tegels van wisselende grootte i.p.v. gelijke vakjes onder elkaar -->
+        <div class="mt-14 grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-5 md:[grid-auto-rows:10.5rem]">
+
+          <!-- Grote tegel: hoofdpunt -->
+          <div class="reveal group card-hover md:col-span-2 md:row-span-2 relative overflow-hidden glass rounded-[28px] p-8 flex flex-col justify-between">
+            <div class="absolute -right-12 -bottom-12 h-48 w-48 rounded-full bg-neon/10 blur-3xl pointer-events-none transition-opacity duration-500 group-hover:opacity-80"></div>
+            <div class="relative">
+              <div class="h-12 w-12 rounded-2xl bg-neon/10 text-neon flex items-center justify-center">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>
+              </div>
+              <p class="mt-6 text-2xl sm:text-[1.75rem] font-heading font-semibold text-white leading-tight">Schone code,<br />geen trage templates</p>
+              <p class="mt-3 text-muted leading-relaxed max-w-sm">Ik bouw met moderne, lichte code — geen opgeblazen page-builders die uw website vertragen.</p>
             </div>
-            <p class="mt-4 font-semibold text-white">Schone code, geen trage templates</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Ik bouw met moderne, lichte code — geen opgeblazen page-builders die je site vertragen.</p>
           </div>
 
-          <div class="reveal d1 rounded-2xl border border-line bg-surface/60 p-6">
-            <div class="h-11 w-11 rounded-xl bg-neon/10 text-neon flex items-center justify-center">
+          <!-- Brede tegel -->
+          <div class="reveal d1 group card-hover md:col-span-2 glass rounded-[28px] p-6 sm:p-7 flex items-center gap-5">
+            <span class="h-11 w-11 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center shrink-0">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+            </span>
+            <div>
+              <p class="font-semibold text-white">Mobiel-eerst ontworpen</p>
+              <p class="mt-1 text-sm text-muted leading-relaxed">Elk ontwerp start op smartphone-formaat, want daar bevindt zich het merendeel van uw bezoekers.</p>
             </div>
-            <p class="mt-4 font-semibold text-white">Mobiel-eerst ontworpen</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Elk ontwerp start op smartphone-formaat, want daar zit het merendeel van je bezoekers.</p>
           </div>
 
-          <div class="reveal d2 rounded-2xl border border-line bg-surface/60 p-6">
-            <div class="h-11 w-11 rounded-xl bg-neon/10 text-neon flex items-center justify-center">
+          <!-- Kleine tegel -->
+          <div class="reveal d2 group card-hover glass rounded-[28px] p-6 flex flex-col justify-center">
+            <span class="h-10 w-10 rounded-xl bg-neon/10 text-neon flex items-center justify-center">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H8l-4 4V4Z"/></svg>
-            </div>
-            <p class="mt-4 font-semibold text-white">Hosting &amp; onderhoud inbegrepen</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Geen losse facturen of technische zorgen: hosting, updates en back-ups zitten inbegrepen.</p>
+            </span>
+            <p class="mt-4 text-sm font-semibold text-white leading-snug">Hosting &amp; onderhoud inbegrepen</p>
           </div>
 
-          <div class="reveal d3 rounded-2xl border border-line bg-surface/60 p-6">
-            <div class="h-11 w-11 rounded-xl bg-neon/10 text-neon flex items-center justify-center">
+          <!-- Kleine tegel -->
+          <div class="reveal d3 group card-hover glass rounded-[28px] p-6 flex flex-col justify-center">
+            <span class="h-10 w-10 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
-            </div>
-            <p class="mt-4 font-semibold text-white">Slimme automatisering</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Van WhatsApp-afspraken tot Supabase-koppelingen: ik automatiseer wat tijd kost.</p>
+            </span>
+            <p class="mt-4 text-sm font-semibold text-white leading-snug">Slimme automatisering</p>
           </div>
+
+          <!-- Brede tegel: automatisering-toelichting -->
+          <div class="reveal group card-hover md:col-span-3 glass rounded-[28px] p-6 sm:p-7 flex items-center gap-5">
+            <span class="h-11 w-11 rounded-xl bg-neon/10 text-neon flex items-center justify-center shrink-0">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"/></svg>
+            </span>
+            <p class="text-white leading-relaxed">WhatsApp-booking, Supabase-koppelingen en workflow-automatisering — op maat ontwikkeld voor uw bedrijf.</p>
+          </div>
+
+          <!-- Kleine tegel: locatie -->
+          <div class="reveal group card-hover glass rounded-[28px] p-6 flex flex-col justify-center">
+            <span class="h-10 w-10 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <p class="mt-4 text-sm font-semibold text-white leading-snug">Antwerpen &amp; omstreken</p>
+          </div>
+
         </div>
       </div>
     </section>
 
     <!-- ============ WERKWIJZE ============ -->
-    <section id="werkwijze" class="py-20 sm:py-28 border-t border-line">
-      <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <section id="werkwijze" class="relative overflow-hidden py-24 sm:py-36 border-t border-line">
+      <div class="absolute -bottom-24 left-0 h-[30rem] w-[30rem] rounded-full bg-cyan/[0.07] blur-[130px] pointer-events-none"></div>
+      <div class="relative max-w-6xl mx-auto px-5 sm:px-8">
         <div class="reveal text-center max-w-2xl mx-auto">
-          <span class="text-xs font-semibold tracking-widest text-neon uppercase">Werkwijze</span>
-          <h2 class="mt-3 font-heading text-3xl sm:text-4xl font-semibold text-white">Van kennismaking tot livegang</h2>
+          <span class="text-xs font-semibold tracking-widest text-muted uppercase">Werkwijze</span>
+          <h2 class="mt-3 font-heading text-4xl sm:text-5xl font-semibold text-white tracking-tight">Van kennismaking tot livegang</h2>
         </div>
 
-        <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="reveal relative rounded-2xl border border-line bg-surface/60 p-6">
-            <span class="font-heading text-3xl font-semibold text-neon/40">01</span>
-            <p class="mt-3 font-semibold text-white">Kennismaking</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Gratis en vrijblijvend gesprek over je bedrijf, doelen en wensen.</p>
+        <!-- Verbonden tijdlijn i.p.v. losse vakjes, in een glaspaneel: lijn + genummerde knopen -->
+        <div class="mt-14 glass rounded-[32px] p-8 sm:p-14">
+        <div class="relative">
+          <div class="sm:hidden absolute left-6 top-6 bottom-6 w-px bg-line" aria-hidden="true"></div>
+          <div class="hidden sm:block absolute top-6 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-neon/60 via-line to-neon/60" aria-hidden="true"></div>
+
+          <div class="grid sm:grid-cols-4 gap-10 sm:gap-6">
+            <div class="reveal relative z-10 flex sm:flex-col items-start sm:items-center gap-4 text-left sm:text-center">
+              <span class="shrink-0 h-12 w-12 rounded-full bg-bg border-2 border-neon text-neon font-heading font-semibold flex items-center justify-center">1</span>
+              <div class="sm:mt-5">
+                <p class="font-semibold text-white">Kennismaking</p>
+                <p class="mt-1.5 text-sm text-muted leading-relaxed sm:max-w-[15rem] sm:mx-auto">Gratis en vrijblijvend gesprek over uw bedrijf, doelen en wensen.</p>
+              </div>
+            </div>
+
+            <div class="reveal d1 relative z-10 flex sm:flex-col items-start sm:items-center gap-4 text-left sm:text-center">
+              <span class="shrink-0 h-12 w-12 rounded-full bg-bg border-2 border-neon text-neon font-heading font-semibold flex items-center justify-center">2</span>
+              <div class="sm:mt-5">
+                <p class="font-semibold text-white">Voorstel &amp; preview</p>
+                <p class="mt-1.5 text-sm text-muted leading-relaxed sm:max-w-[15rem] sm:mx-auto">U ontvangt een duidelijk voorstel met een vaste prijs — zonder verrassingen achteraf.</p>
+              </div>
+            </div>
+
+            <div class="reveal d2 relative z-10 flex sm:flex-col items-start sm:items-center gap-4 text-left sm:text-center">
+              <span class="shrink-0 h-12 w-12 rounded-full bg-bg border-2 border-neon text-neon font-heading font-semibold flex items-center justify-center">3</span>
+              <div class="sm:mt-5">
+                <p class="font-semibold text-white">Bouw &amp; feedback</p>
+                <p class="mt-1.5 text-sm text-muted leading-relaxed sm:max-w-[15rem] sm:mx-auto">Ik ontwikkel uw website; u geeft feedback totdat alles naar wens is.</p>
+              </div>
+            </div>
+
+            <div class="reveal d3 relative z-10 flex sm:flex-col items-start sm:items-center gap-4 text-left sm:text-center">
+              <span class="shrink-0 h-12 w-12 rounded-full bg-bg border-2 border-neon text-neon font-heading font-semibold flex items-center justify-center">4</span>
+              <div class="sm:mt-5">
+                <p class="font-semibold text-white">Livegang &amp; onderhoud</p>
+                <p class="mt-1.5 text-sm text-muted leading-relaxed sm:max-w-[15rem] sm:mx-auto">Uw website gaat live, waarna ik beschikbaar blijf voor onderhoud en updates.</p>
+              </div>
+            </div>
           </div>
-          <div class="reveal d1 relative rounded-2xl border border-line bg-surface/60 p-6">
-            <span class="font-heading text-3xl font-semibold text-neon/40">02</span>
-            <p class="mt-3 font-semibold text-white">Voorstel &amp; preview</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Je ontvangt een duidelijk voorstel met vaste prijs — geen verrassingen achteraf.</p>
-          </div>
-          <div class="reveal d2 relative rounded-2xl border border-line bg-surface/60 p-6">
-            <span class="font-heading text-3xl font-semibold text-neon/40">03</span>
-            <p class="mt-3 font-semibold text-white">Bouw &amp; feedback</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Ik bouw je website, jij geeft feedback tot alles klopt.</p>
-          </div>
-          <div class="reveal d3 relative rounded-2xl border border-line bg-surface/60 p-6">
-            <span class="font-heading text-3xl font-semibold text-neon/40">04</span>
-            <p class="mt-3 font-semibold text-white">Livegang &amp; onderhoud</p>
-            <p class="mt-2 text-sm text-muted leading-relaxed">Je site gaat live, en ik blijf beschikbaar voor onderhoud en updates.</p>
-          </div>
+        </div>
         </div>
       </div>
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <section id="contact" class="relative overflow-hidden py-20 sm:py-28 border-t border-line">
+    <section id="contact" class="relative overflow-hidden py-24 sm:py-36 border-t border-line">
       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-neon/10 blur-[120px] pointer-events-none"></div>
 
       <div class="relative max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-5 gap-12">
         <div class="reveal lg:col-span-2">
-          <span class="text-xs font-semibold tracking-widest text-neon uppercase">Contact</span>
-          <h2 class="mt-3 font-heading text-3xl sm:text-4xl font-semibold text-white leading-tight">
+          <span class="text-xs font-semibold tracking-widest text-muted uppercase">Contact</span>
+          <h2 class="mt-3 font-heading text-4xl sm:text-5xl font-semibold text-white tracking-tight leading-tight">
             Klaar voor een supersnelle website?
           </h2>
           <p class="mt-4 text-muted leading-relaxed">
-            Vraag een gratis analyse of preview aan — vrijblijvend en zonder poespas.
-            Meestal reactie binnen 24 uur.
+            Vraag een gratis analyse of preview aan — vrijblijvend en zonder verplichtingen.
+            Doorgaans reactie binnen 24 uur.
           </p>
 
           <div class="mt-8 flex flex-col gap-3">
             <!-- Vervang het nummer hieronder door je eigen WhatsApp-nummer (internationaal formaat, zonder +) -->
             <a href="https://wa.me/32470000000?text=Hallo%2C%20ik%20wil%20graag%20een%20gratis%20preview%20aanvragen." target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center justify-center gap-2 rounded-full bg-neon text-bg font-semibold px-6 py-3.5 hover:shadow-glow transition-shadow">
+               class="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg font-semibold px-6 py-3.5 hover:shadow-glow transition-shadow">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.7.44 3.36 1.28 4.82L2 22l5.4-1.42a9.9 9.9 0 0 0 4.64 1.18h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.86 9.86 0 0 0 12.04 2Zm0 18.08h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.31c0-4.53 3.69-8.22 8.24-8.22 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.53-3.7 8.15-8.23 8.15Zm4.51-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.4-.12-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.36-.77-1.86-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31s-.87.85-.87 2.08.89 2.41 1.02 2.58c.12.17 1.75 2.67 4.24 3.74.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.23-.17-.48-.29Z"/></svg>
               Chat via WhatsApp
             </a>
@@ -456,19 +557,19 @@
           </div>
         </div>
 
-        <form id="contact-form" novalidate class="reveal d1 lg:col-span-3 rounded-2xl border border-line bg-surface/60 p-6 sm:p-8 space-y-5">
+        <form id="contact-form" novalidate class="reveal d1 lg:col-span-3 rounded-[28px] glass p-6 sm:p-8 space-y-5">
           <div class="grid sm:grid-cols-2 gap-5">
             <div>
               <label for="naam" class="block text-sm text-slate-300 mb-1.5">Naam <span class="text-neon">*</span></label>
               <input id="naam" name="naam" type="text" required autocomplete="name"
                 class="w-full rounded-lg bg-surface2 border border-line px-4 py-3 text-sm text-white placeholder:text-muted/60 focus:outline-none focus:border-neon/60 focus:ring-1 focus:ring-neon/40 transition-colors"
-                placeholder="Je naam" />
+                placeholder="Uw naam" />
             </div>
             <div>
               <label for="email" class="block text-sm text-slate-300 mb-1.5">E-mail <span class="text-neon">*</span></label>
               <input id="email" name="email" type="email" required autocomplete="email"
                 class="w-full rounded-lg bg-surface2 border border-line px-4 py-3 text-sm text-white placeholder:text-muted/60 focus:outline-none focus:border-neon/60 focus:ring-1 focus:ring-neon/40 transition-colors"
-                placeholder="jij@bedrijf.be" />
+                placeholder="naam@bedrijf.be" />
             </div>
           </div>
 
@@ -495,16 +596,16 @@
             <label for="bericht" class="block text-sm text-slate-300 mb-1.5">Bericht <span class="text-neon">*</span></label>
             <textarea id="bericht" name="bericht" rows="4" required
               class="w-full rounded-lg bg-surface2 border border-line px-4 py-3 text-sm text-white placeholder:text-muted/60 focus:outline-none focus:border-neon/60 focus:ring-1 focus:ring-neon/40 transition-colors resize-none"
-              placeholder="Vertel kort over je bedrijf en wat je nodig hebt..."></textarea>
+              placeholder="Vertel kort over uw bedrijf en wat u nodig heeft..."></textarea>
           </div>
 
-          <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-full bg-neon text-bg font-semibold px-6 py-3.5 hover:shadow-glow transition-shadow">
+          <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-neon to-cyan-400 text-bg font-semibold px-6 py-3.5 hover:shadow-glow transition-shadow">
             Vraag gratis preview aan
           </button>
 
           <p id="form-status" role="status" class="hidden text-sm text-neon text-center"></p>
           <p class="text-xs text-muted text-center">
-            Door dit formulier te versturen open je je e-mailprogramma met je aanvraag klaar om te verzenden.
+            Door dit formulier te verzenden, opent uw e-mailprogramma met de aanvraag gereed om te versturen.
           </p>
         </form>
       </div>
@@ -512,7 +613,8 @@
   </main>
 
   <!-- ============ FOOTER ============ -->
-  <footer class="border-t border-line">
+  <footer class="relative">
+    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
     <div class="max-w-6xl mx-auto px-5 sm:px-8 py-12 grid sm:grid-cols-3 gap-8">
       <div>
         <a href="#hero" class="flex items-center gap-2 font-heading font-semibold text-lg text-white">
@@ -551,6 +653,188 @@
   </footer>
 
   <script>
+
+    // ============ Geanimeerde achtergrond: sterrenveld + holografisch netwerk ============
+    // Galaxy-sfeer: twinkelende sterren, drijvende multi-kleur datapunten die
+    // verbinden, en af en toe een vallende ster. Fixed over de volledige pagina,
+    // reageert licht op de muis, respecteert prefers-reduced-motion.
+    (function () {
+      const canvas = document.getElementById('bg-canvas');
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext('2d');
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const COLORS = ['57,255,158', '34,211,238', '167,139,250', '244,114,182']; // groen, cyaan, violet, roze (alleen op de achtergrond)
+      const mouse = { x: null, y: null, radius: 150 };
+      let w = 0, h = 0, dpr = 1, t = 0, rafId = null;
+      let stars = [], particles = [], shootingStars = [], framesUntilShoot = 200;
+
+      function initStars() {
+        const count = Math.min(220, Math.max(60, Math.round((w * h) / 6500)));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.1 + 0.3,
+          base: 0.25 + Math.random() * 0.55,
+          speed: 0.4 + Math.random() * 1.1,
+          phase: Math.random() * Math.PI * 2,
+        }));
+      }
+
+      function initParticles() {
+        const density = w < 640 ? 18000 : 10000; // minder deeltjes op kleine schermen
+        const count = Math.min(90, Math.max(24, Math.round((w * h) / density)));
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.28,
+          vy: (Math.random() - 0.5) * 0.28,
+          r: Math.random() * 1.5 + 0.6,
+          c: COLORS[(Math.random() * COLORS.length) | 0],
+        }));
+      }
+
+      function spawnShootingStar() {
+        const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+        const speed = 9 + Math.random() * 7;
+        shootingStars.push({
+          x: Math.random() * w * 0.6 + w * 0.2,
+          y: Math.random() * h * 0.2,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 0,
+          maxLife: 34 + Math.random() * 18,
+        });
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        initStars();
+        initParticles();
+      }
+
+      function drawFrame() {
+        ctx.clearRect(0, 0, w, h);
+        t += 1;
+
+        // Twinkelende sterren
+        for (const s of stars) {
+          const a = s.base * (0.55 + 0.45 * Math.sin(t * 0.02 * s.speed + s.phase));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(235,240,255,${a.toFixed(3)})`;
+          ctx.fill();
+        }
+
+        // Vallende ster (af en toe)
+        if (!prefersReduced) {
+          framesUntilShoot -= 1;
+          if (framesUntilShoot <= 0) {
+            spawnShootingStar();
+            framesUntilShoot = 260 + Math.random() * 340;
+          }
+        }
+        shootingStars = shootingStars.filter((s) => {
+          s.x += s.vx;
+          s.y += s.vy;
+          s.life += 1;
+          const alpha = 1 - s.life / s.maxLife;
+          if (alpha <= 0 || s.x > w + 60 || s.y > h + 60) return false;
+          const tx = s.x - s.vx * 4.5;
+          const ty = s.y - s.vy * 4.5;
+          const grad = ctx.createLinearGradient(tx, ty, s.x, s.y);
+          grad.addColorStop(0, 'rgba(255,255,255,0)');
+          grad.addColorStop(1, `rgba(255,255,255,${(0.9 * alpha).toFixed(3)})`);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(tx, ty);
+          ctx.lineTo(s.x, s.y);
+          ctx.stroke();
+          return true;
+        });
+
+        // Datapunten + verbindingslijnen
+        for (const p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = w; else if (p.x > w) p.x = 0;
+          if (p.y < 0) p.y = h; else if (p.y > h) p.y = 0;
+
+          if (mouse.x !== null) {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < mouse.radius && dist > 0.01) {
+              const force = (1 - dist / mouse.radius) * 0.015;
+              p.vx += (dx / dist) * force;
+              p.vy += (dy / dist) * force;
+            }
+          }
+          p.vx *= 0.98;
+          p.vy *= 0.98;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.c},0.6)`;
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = `rgba(${p.c},0.65)`;
+          ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+
+        const maxDist = w < 640 ? 95 : 130;
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const a = particles[i], b = particles[j];
+            const dx = a.x - b.x, dy = a.y - b.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < maxDist) {
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = `rgba(255,255,255,${0.055 * (1 - dist / maxDist)})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function loop() {
+        drawFrame();
+        rafId = requestAnimationFrame(loop);
+      }
+
+      window.addEventListener('resize', () => {
+        clearTimeout(window.__bgResizeT);
+        window.__bgResizeT = setTimeout(resize, 150);
+      });
+      window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+      window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (rafId) cancelAnimationFrame(rafId);
+        } else if (!prefersReduced) {
+          loop();
+        }
+      });
+
+      resize();
+      if (prefersReduced) {
+        drawFrame(); // één rustig frame, geen doorlopende animatie of vallende sterren
+      } else {
+        loop();
+      }
+    })();
+
     // Jaartal footer
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -579,9 +863,11 @@
     const navbar = document.getElementById('navbar');
     function onScroll() {
       if (window.scrollY > 12) {
-        navbar.classList.add('bg-bg/85', 'backdrop-blur-md', 'border-line', 'shadow-lg', 'shadow-black/30');
+        navbar.classList.add('bg-black/50', 'border-white/10', 'shadow-lg', 'shadow-black/40');
+        navbar.classList.remove('bg-white/[0.03]', 'border-white/[0.06]');
       } else {
-        navbar.classList.remove('bg-bg/85', 'backdrop-blur-md', 'border-line', 'shadow-lg', 'shadow-black/30');
+        navbar.classList.remove('bg-black/50', 'border-white/10', 'shadow-lg', 'shadow-black/40');
+        navbar.classList.add('bg-white/[0.03]', 'border-white/[0.06]');
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -641,7 +927,7 @@
 
       window.location.href = `mailto:info@elleven.be?subject=${subject}&body=${body}`;
 
-      formStatus.textContent = 'Je e-mailprogramma opent met je aanvraag klaar om te versturen.';
+      formStatus.textContent = 'Uw e-mailprogramma opent met de aanvraag gereed om te versturen.';
       formStatus.classList.remove('hidden');
       form.reset();
     });
