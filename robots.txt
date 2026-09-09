@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.elleven.be/sitemap.xml
+Sitemap: https://www.e11even.be/sitemap.xml
