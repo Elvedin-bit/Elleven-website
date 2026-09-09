@@ -770,7 +770,11 @@
           </div>
         </div>
 
-        <form id="contact-form" novalidate class="reveal d1 lg:col-span-3 rounded-[28px] glass p-6 sm:p-8 space-y-5">
+        <form id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate class="reveal d1 lg:col-span-3 rounded-[28px] glass p-6 sm:p-8 space-y-5">
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden">
+            <label>Niet invullen indien mens: <input name="bot-field" /></label>
+          </p>
           <div class="grid sm:grid-cols-2 gap-5">
             <div>
               <label for="naam" class="block text-sm text-slate-300 mb-1.5">Naam <span class="text-neon">*</span></label>
@@ -818,7 +822,7 @@
 
           <p id="form-status" role="status" class="hidden text-sm text-neon text-center"></p>
           <p class="text-xs text-muted text-center">
-            Door dit formulier te verzenden, opent uw e-mailprogramma met de aanvraag gereed om te versturen.
+            Uw aanvraag komt rechtstreeks bij ons binnen &mdash; u hoeft niets zelf te versturen.
           </p>
         </form>
       </div>
@@ -1124,11 +1128,15 @@
       });
     });
 
-    // Contactformulier -> opent e-mailprogramma met vooringevulde aanvraag
-    // Wil je het formulier écht server-side laten versturen (zonder mailto)?
-    // Koppel dan een dienst zoals Formspree of Web3Forms aan het "action"-attribuut.
+    // Contactformulier -> Netlify Forms vangt de inzending op en stuurt een e-mail
+    // (in te stellen in Netlify: Site configuration -> Forms -> Form notifications).
     const form = document.getElementById('contact-form');
     const formStatus = document.getElementById('form-status');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    function encodeFormData(data) {
+      return new URLSearchParams(data).toString();
+    }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -1137,31 +1145,26 @@
         return;
       }
 
-      const naam = form.naam.value.trim();
-      const email = form.email.value.trim();
-      const telefoon = form.telefoon.value.trim();
-      const pakket = form.pakket.value;
-      const bericht = form.bericht.value.trim();
+      const formData = new FormData(form);
+      submitButton.disabled = true;
 
-      const subject = encodeURIComponent(`Kennismaking – ${naam}`);
-      const bodyLines = [
-        `Naam: ${naam}`,
-        `E-mail: ${email}`,
-        telefoon ? `Telefoon: ${telefoon}` : null,
-        `Pakket: ${pakket}`,
-        '',
-        'Bericht:',
-        bericht,
-      ]
-        .filter(Boolean)
-        .join('\n');
-      const body = encodeURIComponent(bodyLines);
-
-      window.location.href = `mailto:info@e11even.be?subject=${subject}&body=${body}`;
-
-      formStatus.textContent = 'Uw e-mailprogramma opent met de aanvraag gereed om te versturen.';
-      formStatus.classList.remove('hidden');
-      form.reset();
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encodeFormData(formData),
+      })
+        .then(() => {
+          formStatus.textContent = 'Bedankt! Uw aanvraag is verstuurd, we nemen snel contact op.';
+          formStatus.classList.remove('hidden');
+          form.reset();
+        })
+        .catch(() => {
+          formStatus.textContent = 'Er ging iets mis bij het versturen. Probeer het opnieuw of mail ons rechtstreeks op info@e11even.be.';
+          formStatus.classList.remove('hidden');
+        })
+        .finally(() => {
+          submitButton.disabled = false;
+        });
     });
   </script>
 </body>
