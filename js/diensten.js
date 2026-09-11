@@ -1,10 +1,9 @@
 /**
- * Dienstenkaarten: binnenkomst, volgnummers en de interactie erop.
+ * Dienstenkaarten: binnenkomst en de interactie erop.
  *
- * De sectie heeft een eigen module omdat de binnenkomst en de nummers samen één
- * beweging vormen — de kaart komt op, het nummer telt mee — en dat laat zich niet
- * vangen in het algemene reveal-systeem. js/reveal.js laat [data-dienst] daarom
- * met rust.
+ * De sectie heeft een eigen module omdat de binnenkomst (kantelend opkomen,
+ * gestaffeld per kaart) niet in het algemene reveal-systeem past. js/reveal.js
+ * laat [data-dienst] daarom met rust.
  *
  * De interactie bestaat in twee smaken, en welke je krijgt hangt niet af van de
  * schermbreedte maar van wat het apparaat kán:
@@ -44,8 +43,6 @@ export function initDiensten() {
       kaart.classList.add('in-view');
       kaart.style.opacity = '';
       kaart.style.transform = '';
-      const nr = kaart.querySelector('.dienst-nummer');
-      if (nr) nr.textContent = String(kaart.dataset.nummer || '').padStart(2, '0');
     });
   }
 
@@ -56,18 +53,11 @@ export function initDiensten() {
     }
   }
 
-  /* ============================================ binnenkomst + nummers ==== */
+  /* ===================================================== binnenkomst ==== */
 
   mm.add(BEWEGING, () => {
     afgeschermd('binnenkomst', () => {
-      kaarten.forEach((kaart) => {
-        kaart.classList.add('anim-verborgen');
-        // Meteen op nul zetten, nu de kaart nog onzichtbaar is. Zou dat pas
-        // gebeuren wanneer het optellen begint, dan zie je het nummer eerst even
-        // op zijn eindwaarde staan en daarna terugvallen.
-        const nr = kaart.querySelector('.dienst-nummer');
-        if (nr) nr.textContent = '00';
-      });
+      kaarten.forEach((kaart) => kaart.classList.add('anim-verborgen'));
       // rotateX geeft de kaart net iets meer dan een schuif: hij komt op je toe.
       gsap.set(kaarten, { opacity: 0, y: 38, rotationX: -6, transformPerspective: 900 });
 
@@ -86,21 +76,6 @@ export function initDiensten() {
               // laten we juist staan — de muis-interactie hieronder heeft het nodig.
               this.targets().forEach((k) => k.classList.remove('anim-verborgen'));
             },
-          });
-
-          groepje.forEach((kaart, i) => {
-            const nr = kaart.querySelector('.dienst-nummer');
-            const doel = parseInt(kaart.dataset.nummer, 10);
-            if (!nr || !doel) return;
-            const teller = { n: 0 };
-            gsap.to(teller, {
-              n: doel,
-              duration: 0.7,
-              delay: 0.12 + i * 0.09,
-              ease: 'power1.out',
-              onUpdate: () => { nr.textContent = String(Math.round(teller.n)).padStart(2, '0'); },
-              onComplete: () => { nr.textContent = String(doel).padStart(2, '0'); },
-            });
           });
         },
       });

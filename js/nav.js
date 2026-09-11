@@ -1,6 +1,6 @@
 /**
  * Navigatie en vaste schermelementen: het mobiele menu, de meelopende navbar,
- * het geanimeerd scrollen naar ankers en de zwevende WhatsApp-knop.
+ * het scrollen naar ankers en de zwevende WhatsApp-knop.
  *
  * Deze zaken staan samen omdat ze alle drie reageren op de scrollpositie. Ze
  * delen daarom bewust één scroll-listener in plaats van elk een eigen listener,
@@ -10,12 +10,20 @@
  * Waarom hier géén ScrollTrigger: dit is de basisbediening van de site. Die moet
  * blijven werken, ook als GSAP om welke reden dan ook niet laadt. ScrollTrigger
  * wordt ingezet waar het echt iets toevoegt — de scroll-animaties in reveal.js.
- * Voor het geanimeerde scrollen naar een anker gebruiken we GSAP wél, met een
- * gewone sprong als terugval.
+ *
+ * HET SCROLLEN NAAR EEN ANKER GAAT VIA DE BROWSER ZELF, NIET VIA GSAP.
+ * Dat stond hier eerder anders (een GSAP-tween met ScrollToPlugin), met als
+ * reden dat CSS' eigen `scroll-behavior: smooth` zou botsen met de gepinde
+ * werkwijze-tijdlijn. Die pin bestaat niet meer (zie js/secties.js), dus die
+ * reden is vervallen — en de eigen tween had een risico dat native scrollen
+ * niet heeft: GSAP's `autoKill` breekt de animatie af zodra het ook maar íets
+ * aan scroll-input detecteert, en op een telefoon geeft een tik op een link
+ * bijna altijd een minuscuul stukje eigen scrollbeweging mee. Vaker dan je zou
+ * denken bleef de pagina daardoor op mobiel halverwege een sectie hangen.
+ * `Element.scrollIntoView()` kent dat probleem niet: de browser regelt zelf de
+ * animatie, respecteert `scroll-padding-top` (dezelfde navbar-compensatie als
+ * voorheen) en breekt nooit halverwege af.
  */
-
-// Moet gelijk blijven aan scroll-padding-top in src/css/input.css (5rem).
-const NAVBAR_OFFSET = 80;
 
 export function initNav() {
   const navbar = document.getElementById('navbar');
@@ -94,12 +102,8 @@ export function initNav() {
 
   /* -------------------------------------------- scrollen naar ankers ----- */
 
-  // scroll-behavior: smooth is bewust van <html> gehaald. Daarmee animeert de
-  // browser de scrollpositie zelf, buiten GSAP om, en dat botst met ScrollTrigger
-  // zodra er scroll-gekoppelde animaties bijkomen. GSAP doet het scrollen nu
-  // zelf, met dezelfde navbar-compensatie als voorheen.
-  const gsap = window.gsap;
-  const kanAnimeren = Boolean(gsap && window.ScrollToPlugin);
+  // Bij een bewegingsvoorkeur voor "minder animatie" springt de pagina meteen
+  // naar de sectie; anders animeert scroll-behavior: smooth uit de CSS mee.
   const wilMinderBeweging = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -118,16 +122,12 @@ export function initNav() {
       e.preventDefault();
       closeMenu();
 
-      if (kanAnimeren && !wilMinderBeweging) {
-        gsap.to(window, {
-          duration: 0.9,
-          ease: 'power2.inOut',
-          scrollTo: { y: doel, offsetY: NAVBAR_OFFSET, autoKill: true },
-        });
-      } else {
-        const y = doel.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET;
-        window.scrollTo(0, Math.max(0, y));
-      }
+      // scrollIntoView() houdt vanzelf rekening met scroll-padding-top (de
+      // navbar-compensatie uit src/css/input.css) en blijft, anders dan een
+      // GSAP-tween met autoKill, gewoon doorlopen ook als er onderweg een
+      // heel klein beetje eigen scroll-input bij komt — precies wat er op
+      // een telefoon bij een gewone tik al kan gebeuren.
+      doel.scrollIntoView({ behavior: wilMinderBeweging ? 'auto' : 'smooth', block: 'start' });
 
       if (history.replaceState) history.replaceState(null, '', href);
     });

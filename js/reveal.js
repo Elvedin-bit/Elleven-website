@@ -58,7 +58,6 @@ export function initReveal() {
   }
 
   gsap.registerPlugin(ScrollTrigger);
-  if (window.ScrollToPlugin) gsap.registerPlugin(window.ScrollToPlugin);
 
   // GSAP houdt zich niet vanzelf aan de bewegingsvoorkeur van het systeem;
   // matchMedia regelt dat hier expliciet, en schakelt ook netjes om wanneer de

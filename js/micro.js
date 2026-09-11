@@ -15,10 +15,13 @@
  *   - Tekstvelden hebben een tekstcursor nodig, uitgeschakelde knoppen een
  *     verbodsteken. Dat allemaal nabouwen levert niets op en gaat ergens stuk.
  *
- * Wat we wél doen: een zachte ring die de cursor volgt en reageert op wat
- * eronder ligt. Het premium-gevoel zonder de precisie op te offeren. Wil je
- * alsnog de volledige vervanging, dan is VERBERG_NATIVE_CURSOR de enige knop
- * die om moet — maar lees eerst het bovenstaande.
+ * Wat we wél doen: een kleine, subtiele stip die de cursor op een boogje volgt
+ * en licht reageert op wat eronder ligt. Bewust klein gehouden — een grote,
+ * constant zichtbare cirkel rond de muis viel eerder te veel op en oogde als
+ * een tweede cursor in plaats van een accent. Het premium-gevoel zonder de
+ * precisie op te offeren, en zonder de aandacht van de inhoud te trekken. Wil
+ * je alsnog de volledige vervanging, dan is VERBERG_NATIVE_CURSOR de enige
+ * knop die om moet — maar lees eerst het bovenstaande.
  */
 
 const VERBERG_NATIVE_CURSOR = false;
@@ -66,6 +69,8 @@ export function initMicro() {
     }
 
     function schaal(naar) {
+      // Bescheiden uitslag: de stip mag laten voelen dat er iets klikbaars
+      // onder de muis zit, zonder zelf het opvallende element te worden.
       gsap.to(ring, { scale: naar, duration: 0.32, ease: 'power3.out', overwrite: 'auto' });
     }
 
@@ -78,7 +83,7 @@ export function initMicro() {
       ring.classList.remove('cursor-ring-uit');
       if (doel.closest(KLIKBAAR)) {
         ring.classList.add('cursor-ring-actief');
-        schaal(1.9);
+        schaal(1.6);
       }
     }
 

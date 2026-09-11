@@ -22,8 +22,10 @@
  *  2. ALLEEN TRANSFORM EN OPACITY. Geen enkele animatie raakt eigenschappen
  *     waarvoor de browser de lay-out opnieuw moet berekenen.
  *  3. EENMALIG, NIET DOORLOPEND. Binnenkomst-animaties spelen één keer
- *     (`once: true`). Alleen de parallax en de tijdlijn volgen de scrollpositie,
- *     en die staan stil zodra jij stilstaat.
+ *     (`once: true`). Alleen de parallax volgt de scrollpositie nog, en die
+ *     staat stil zodra jij stilstaat. Nergens wordt een sectie vastgezet
+ *     (`pin`) om een animatie af te dwingen — scrollen moet altijd meteen
+ *     reageren, ook halverwege een animatie.
  */
 
 const BEWEGING = '(prefers-reduced-motion: no-preference)';
@@ -198,8 +200,8 @@ export function initSecties() {
   // Alleen vanaf tablet: de gloedlagen zijn zwaar vervaagde vlakken, en die in
   // beweging houden is op een telefoon de duurste bewerking van de hele pagina.
   mm.add(VANAF_TABLET, () => {
-    // De werkwijze-sectie doet niet mee: die wordt hieronder vastgezet, en een
-    // gloedlaag die blijft schuiven terwijl de sectie stilstaat oogt vreemd.
+    // De werkwijze-sectie doet bewust niet mee: de losstaande stappen daar
+    // lenen zich niet voor een meebewegende gloedlaag op de achtergrond.
     const lagen = Array.from(document.querySelectorAll('main section[id] > div.absolute.pointer-events-none'))
       .filter((laag) => !laag.closest('section').querySelector('[data-tijdlijn]'));
     const tweens = [];
@@ -225,97 +227,48 @@ export function initSecties() {
 
   /* ======================================================== tijdlijn ===== */
 
+  // GEEN PIN MEER HIER — dat is een bewuste reparatie, geen gemiste kans.
+  // De sectie werd voorheen op grote schermen vastgezet (`pin: true`) terwijl
+  // de verbindingslijn zich op het ritme van de scroll tekende: mooi bedoeld,
+  // maar het effect daarvan is dat de pagina een tijdlang niet meebeweegt met
+  // de scrollbeweging van de bezoeker. Dat voelt aan als een vastgelopen
+  // pagina, ook al werkt scrollen zelf gewoon door — en dat gevoel weegt
+  // zwaarder dan het visuele effect. Dit was ook precies de plek waar de
+  // tijdlijn eerder leeg kon blijven staan na een directe sprong naar
+  // #werkwijze (zie de git-geschiedenis). Door hier, net als de rest van de
+  // pagina, gewoon één keer binnen te komen (`once: true`) zonder pin of
+  // scrub, verdwijnt die hele categorie problemen in één keer.
   const tijdlijn = document.querySelector('[data-tijdlijn]');
   if (tijdlijn) {
     const stappen = Array.from(tijdlijn.querySelectorAll('.reveal'));
     const lijnBreed = tijdlijn.querySelector('.hidden.sm\\:block[aria-hidden="true"]');
     const lijnSmal = tijdlijn.querySelector('.sm\\:hidden[aria-hidden="true"]');
 
-    /**
-     * Bouwt de tijdlijn op: de verbindingslijn tekent zich, en elke stap komt
-     * daarna aan de beurt. Met `vast` staat de sectie tijdens dat opbouwen stil,
-     * zodat de vier stappen echt als een reeks lezen in plaats van voorbij te
-     * schuiven.
-     *
-     * DE STAPPEN HANGEN BEWUST NIET AAN DE SCRUB — en dat is een reparatie, geen
-     * stijlkeuze. Ze deden dat eerst wel, en dat brak op een manier die je alleen
-     * ziet als je hem toevallig zo tegenkomt: wie in de navigatie op "Werkwijze"
-     * klikte, landde een paar tientallen pixels vóór het beginpunt van de pin.
-     * De scrub stond dan op nul, dus alle vier de stappen stonden op opacity 0 en
-     * de bezoeker keek naar een kop met een leeg kader eronder. Hetzelfde gold
-     * voor een directe link naar #werkwijze, voor de terugknop van de browser en
-     * voor herladen op die scrollpositie.
-     *
-     * Dat is de valkuil van scrubben: de animatie loopt net zo hard terug als
-     * vooruit, dus inhoud die eraan hangt kan altijd weer verdwijnen. De regel
-     * bovenaan dit bestand zegt het al — binnenkomst speelt één keer, alleen
-     * decoratie volgt de scrollpositie. De tijdlijn was de enige plek die zich
-     * daar niet aan hield.
-     *
-     * Nu doet de pin waar hij goed in is: de sectie stilzetten en de
-     * verbindingslijn zich laten tekenen op het ritme van de scroll. De stappen
-     * komen via hun eigen trigger met `once`, in dezelfde volgorde en met
-     * dezelfde stagger als voorheen — maar ze gaan nooit meer terug.
-     */
-    function bouwTijdlijn(vast) {
-      const sectie = tijdlijn.closest('section');
-      const lijn = window.matchMedia('(min-width: 640px)').matches ? lijnBreed : lijnSmal;
-      const horizontaal = lijn === lijnBreed;
+    mm.add(BEWEGING, () => {
+      onderdeel('tijdlijn', stappen, () => {
+        const lijn = window.matchMedia('(min-width: 640px)').matches ? lijnBreed : lijnSmal;
+        const horizontaal = lijn === lijnBreed;
 
-      verbergen(gsap, stappen, { opacity: 0, y: 26 });
-      if (lijn) {
-        gsap.set(lijn, horizontaal
-          ? { scaleX: 0, transformOrigin: 'left center' }
-          : { scaleY: 0, transformOrigin: 'center top' });
-      }
+        verbergen(gsap, stappen, { opacity: 0, y: 26 });
+        if (lijn) {
+          gsap.set(lijn, horizontaal
+            ? { scaleX: 0, transformOrigin: 'left center' }
+            : { scaleY: 0, transformOrigin: 'center top' });
+        }
 
-      // De stappen: altijd eenmalig, of de sectie nu vastgezet wordt of niet.
-      const stapTl = gsap.timeline({
-        scrollTrigger: { trigger: tijdlijn, start: 'top 80%', once: true },
-      });
-      stappen.forEach((stap, i) => {
-        stapTl.to(stap, { opacity: 1, y: 0, duration: 0.34, ease: 'power2.out' }, i * 0.12);
-      });
-
-      // De lijn: decoratie, dus die mag wél aan de scrollpositie hangen wanneer
-      // de sectie wordt vastgezet. Verdwijnt hij bij terugscrollen, dan mist er
-      // niets wezenlijks — de tekst blijft staan.
-      const lijnTl = gsap.timeline({
-        scrollTrigger: vast
-          ? { trigger: sectie, start: 'center center', end: '+=70%', pin: true, scrub: 0.6, anticipatePin: 1 }
-          : { trigger: tijdlijn, start: 'top 80%', once: true },
-      });
-      if (lijn) {
-        lijnTl.to(lijn, horizontaal ? { scaleX: 1 } : { scaleY: 1 }, 0);
-      }
-      // Wat lege tijd aan het eind: zo staat de afgebouwde tijdlijn nog even
-      // compleet in beeld voordat de sectie weer losgelaten wordt.
-      if (vast) lijnTl.to({}, { duration: 0.3 });
-
-      return [stapTl, lijnTl];
-    }
-
-    // Vastzetten gebeurt alleen wanneer de sectie ook echt in het scherm past.
-    // De sectie is rond de 860 px hoog, dus daaronder zou de boven- of onderkant
-    // wegvallen — en een halve animatie is slechter dan een gewone opbouw.
-    // Omdat dit een mediaquery is en geen eenmalige meting, schakelt hij netjes
-    // om wanneer iemand zijn venster kleiner maakt of zijn tablet draait.
-    mm.add({
-      vast: '(min-width: 1024px) and (min-height: 900px) and (prefers-reduced-motion: no-preference)',
-      los: '(prefers-reduced-motion: no-preference)',
-    }, (context) => {
-      const sectie = tijdlijn.closest('section');
-      const past = Boolean(context.conditions.vast) && sectie && sectie.offsetHeight <= window.innerHeight;
-      let tijdlijnen = [];
-      onderdeel('tijdlijn', stappen, () => { tijdlijnen = bouwTijdlijn(past); });
-      return () => {
-        tijdlijnen.forEach((tl) => {
-          if (!tl) return;
-          if (tl.scrollTrigger) tl.scrollTrigger.kill();
-          tl.kill();
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: tijdlijn, start: 'top 80%', once: true },
         });
-        tonen(stappen);
-      };
+        if (lijn) {
+          tl.to(lijn, {
+            ...(horizontaal ? { scaleX: 1 } : { scaleY: 1 }),
+            duration: 0.8, ease: 'power2.inOut',
+          }, 0);
+        }
+        stappen.forEach((stap, i) => {
+          tl.to(stap, { opacity: 1, y: 0, duration: 0.34, ease: 'power2.out' }, 0.15 + i * 0.12);
+        });
+      });
     });
   }
 
