@@ -58,19 +58,24 @@
   }
   </script>
 
-  <!-- FAQ structured data (houd dit gelijk met de zichtbare FAQ-sectie) -->
+  <!-- FAQ structured data — gegenereerd uit de zichtbare FAQ-sectie hieronder.
+       LET OP: deze tekst moet letterlijk gelijk blijven aan wat de bezoeker ziet.
+       Wijzigt u een vraag of antwoord in de FAQ-sectie, pas het hier dan ook aan. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      { "@type": "Question", "name": "Hoe lang duurt het om een website te bouwen?", "acceptedAnswer": { "@type": "Answer", "text": "Een Basic-website staat doorgaans binnen ongeveer twee weken live. Voor Professional en Custom hangt de timing af van de omvang; u krijgt bij het voorstel een duidelijke planning." } },
-      { "@type": "Question", "name": "Wat zit er in het maandbedrag?", "acceptedAnswer": { "@type": "Answer", "text": "Hosting, beveiligingsupdates, technisch onderhoud en kleine aanpassingen. U hoeft zich niet bezig te houden met techniek of updates." } },
-      { "@type": "Question", "name": "Kan ik mijn website later laten aanpassen?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Kleine aanpassingen vallen onder het maandelijkse onderhoud. Grotere uitbreidingen bespreken we apart met een duidelijk voorstel vooraf." } },
-      { "@type": "Question", "name": "Werkt WhatsApp op mijn telefoon?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Berichten komen binnen op het WhatsApp-nummer dat u nu al gebruikt, op uw eigen telefoon. U hoeft niets extra te installeren." } },
-      { "@type": "Question", "name": "Kunnen klanten online afspraken maken?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. In het Professional-pakket kunnen klanten zelf een afspraak aanvragen of boeken, ook buiten uw openingsuren." } },
-      { "@type": "Question", "name": "Werkt u ook buiten Antwerpen?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Elleven is gevestigd in Antwerpen, maar werkt voor zelfstandigen en kleine ondernemingen in heel België. Een kennismaking kan telefonisch of via videogesprek." } },
-      { "@type": "Question", "name": "Wat als ik niet weet welke functies ik nodig heb?", "acceptedAnswer": { "@type": "Answer", "text": "Daar dient de kennismaking voor. We bekijken samen hoe uw zaak werkt en waar u tijd of klanten verliest, en u krijgt een eerlijk advies." } }
+      { "@type": "Question", "name": "Hoe lang duurt het om een website te bouwen?", "acceptedAnswer": { "@type": "Answer", "text": "Een Basic-website staat doorgaans binnen ongeveer twee weken live. Voor Professional en Custom hangt de timing af van de omvang; u krijgt bij het voorstel een duidelijke planning, zodat u vooraf weet waar u aan toe bent." } },
+      { "@type": "Question", "name": "Wat zit er in het maandbedrag?", "acceptedAnswer": { "@type": "Answer", "text": "Hosting, beveiligingsupdates, technisch onderhoud en kleine aanpassingen. U hoeft zich dus niet bezig te houden met techniek of updates — en als u iets wilt wijzigen, stuurt u gewoon een bericht." } },
+      { "@type": "Question", "name": "Kan ik mijn website later laten aanpassen?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Kleine aanpassingen — een nieuwe openingstijd, een tekstwijziging, een extra foto — vallen onder het maandelijkse onderhoud. Grotere uitbreidingen, zoals een extra pagina of een nieuwe functie, bespreken we apart met een duidelijk voorstel vooraf." } },
+      { "@type": "Question", "name": "Van wie is mijn domeinnaam?", "acceptedAnswer": { "@type": "Answer", "text": "Dat spreken we vooraf helder af, zodat u exact weet wat er op uw naam staat. Heeft u al een domeinnaam? Dan kan die gewoon behouden blijven." } },
+      { "@type": "Question", "name": "Kan ik mijn website zelf beheren?", "acceptedAnswer": { "@type": "Answer", "text": "Dat hoeft niet. U geeft uw wijziging door via mail of WhatsApp en ik voer ze uit — kleine aanpassingen zitten in het maandbedrag. Zo heeft u geen technische kennis nodig en steekt u geen tijd in een beheersysteem. Wilt u toch zelf bepaalde zaken kunnen aanpassen? Dan bekijken we wat daarvoor de beste oplossing is." } },
+      { "@type": "Question", "name": "Werkt WhatsApp op mijn telefoon?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Berichten komen gewoon binnen op het WhatsApp-nummer dat u nu al gebruikt, op uw eigen telefoon. Klanten tikken op de WhatsApp-knop op uw website en het gesprek opent meteen — u hoeft niets extra te installeren." } },
+      { "@type": "Question", "name": "Kunnen klanten online afspraken maken?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. In het Professional-pakket kunnen klanten zelf een afspraak aanvragen of boeken, ook buiten uw openingsuren. In Custom kan dit verder worden uitgebreid, bijvoorbeeld met klantenbeheer of automatische bevestigingen." } },
+      { "@type": "Question", "name": "Werkt u ook buiten Antwerpen?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Elleven is gevestigd in Antwerpen, maar werkt voor zelfstandigen en kleine ondernemingen in heel België. Een kennismaking kan telefonisch of via videogesprek; een website bouwen vraagt geen fysieke afspraak." } },
+      { "@type": "Question", "name": "Hoe zit het met mijn klantgegevens en privacy?", "acceptedAnswer": { "@type": "Answer", "text": "Gegevens die klanten via uw website achterlaten — via een formulier, boeking of WhatsApp — zijn van u en worden enkel gebruikt waarvoor ze bedoeld zijn. Ik werk volgens de geldende privacyregels (GDPR) en bespreek vooraf met u welke gegevens worden bewaard en waar." } },
+      { "@type": "Question", "name": "Wat als ik niet weet welke functies ik nodig heb?", "acceptedAnswer": { "@type": "Answer", "text": "Daar dient de kennismaking net voor. We bekijken samen hoe uw zaak werkt en waar u nu tijd of klanten verliest. Op basis daarvan krijgt u een eerlijk advies — ook als dat betekent dat een eenvoudig pakket volstaat." } }
     ]
   }
   </script>
@@ -219,6 +224,26 @@
     @media (prefers-reduced-motion: reduce) {
       .wa-fab { transition: opacity .2s ease; transform: none !important; }
     }
+
+    /* ---------------------------------------------------------------------
+       Reparaties voor klassen die ontbreken in de gecompileerde styles.css.
+
+       In de (niet meer aanwezige) Tailwind-config is 'cyan' als één vlakke
+       kleur gedefinieerd, waardoor Tailwind's volledige cyan-schaal is
+       overschreven en 'cyan-400' nooit is gegenereerd. Gevolg: elke primaire
+       knop met "from-neon to-cyan-400" liep groen -> transparant in plaats
+       van groen -> cyaan. Hetzelfde geldt voor de opacity-stap /6, die niet
+       op Tailwind's schaal staat.
+
+       Zodra er weer een echte Tailwind-build draait, kunnen deze twee regels
+       vervallen en worden ze automatisch correct gegenereerd.
+       --------------------------------------------------------------------- */
+    .to-cyan-400 { --tw-gradient-to: #22d3ee var(--tw-gradient-to-position); }
+    .bg-cyan\/6 { background-color: rgba(34, 211, 238, 0.06); }
+
+    /* Foutmelding van het contactformulier moet duidelijk als fout lezen,
+       niet in dezelfde groene 'geslaagd'-kleur. */
+    .form-status-error { color: #ff6b6b; }
   </style>
 </head>
 
@@ -1214,14 +1239,23 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: encodeFormData(formData),
       })
-        .then(() => {
+        .then((response) => {
+          // BELANGRIJK: fetch() weigert alleen bij een netwerkfout. Een 404 of 500
+          // van Netlify (bijvoorbeeld wanneer de formulierherkenning stilvalt na een
+          // aanpassing aan de markup) komt hier gewoon als een 'geslaagde' respons
+          // binnen. Zonder deze controle zou de bezoeker een bevestiging zien terwijl
+          // de aanvraag nergens aankomt.
+          if (!response.ok) {
+            throw new Error('Netlify gaf status ' + response.status);
+          }
           formStatus.textContent = 'Bedankt! Uw aanvraag is verstuurd, we nemen snel contact op.';
-          formStatus.classList.remove('hidden');
+          formStatus.classList.remove('hidden', 'form-status-error');
           form.reset();
         })
         .catch(() => {
           formStatus.textContent = 'Er ging iets mis bij het versturen. Probeer het opnieuw of mail ons rechtstreeks op info@e11even.be.';
           formStatus.classList.remove('hidden');
+          formStatus.classList.add('form-status-error');
         })
         .finally(() => {
           submitButton.disabled = false;
