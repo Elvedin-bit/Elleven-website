@@ -1,0 +1,21 @@
+# Buildgereedschap haalt zijn pakketten zelf op; die horen niet in de repo.
+build/node_modules/
+
+# Lokale werkbestanden en back-ups, geen onderdeel van de site.
+baseline/
+after/
+oud/
+baseline-src.html
+diff-hero.png
+verify-*.png
+index.backup-*.html
+
+# Losse opleveringen en werkmateriaal: horen bij het project, maar niet in de
+# gepubliceerde site. Zonder deze regels komen ze op het web te staan op een
+# raadbare URL.
+logo/
+elleven-logo.zip
+elleven-copywriting-analyse.md
+na-hero/
+na-scroll/
+banner/

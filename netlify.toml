@@ -1,2 +1,88 @@
+# Netlify-configuratie voor de Elleven-website.
+#
+# De repo-root is de gepubliceerde site; er is bewust geen build-commando, zodat
+# Netlify hier niets probeert te compileren. Het bouwen van styles.css gebeurt
+# lokaal vanuit build/ (zie build/package.json).
+
 [functions]
   directory = "netlify/functions"
+
+
+# ============================================================================
+#  Beveiligingsheaders
+# ----------------------------------------------------------------------------
+#  Deze stonden er niet, waardoor de site draaide met alleen de standaard-
+#  instellingen van de browser. Geen van deze regels verandert iets aan hoe de
+#  pagina eruitziet; ze beperken wat een aanvaller ermee zou kunnen doen.
+# ============================================================================
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+
+    # De browser mag het opgegeven bestandstype niet negeren en zelf iets anders
+    # gokken. Voorkomt dat een geüpload bestand als script wordt uitgevoerd.
+    X-Content-Type-Options = "nosniff"
+
+    # Niemand mag deze site in een frame zetten. Dat is de klassieke
+    # clickjacking-opzet: de echte site onzichtbaar over een nagemaakte knop
+    # leggen. frame-ancestors in de CSP hieronder doet hetzelfde voor moderne
+    # browsers; deze header dekt de oudere.
+    X-Frame-Options = "DENY"
+
+    # Bij het doorklikken naar een externe site (WhatsApp) gaat alleen het
+    # domein mee, niet de volledige URL.
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # De site vraagt nergens om camera, microfoon, locatie of betaalgegevens.
+    # Dit zet die rechten expliciet uit, ook voor alles wat later ingesloten
+    # zou worden.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+
+    # Altijd via https, twee jaar lang, inclusief subdomeinen.
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+    # ------------------------------------------------------------------------
+    #  Content-Security-Policy
+    # ------------------------------------------------------------------------
+    #  ⚠️  LET OP — DE TWEE sha256-WAARDEN HIERONDER HOREN BIJ DE TWEE INLINE
+    #      SCRIPTS IN DE <head> VAN index.html. Wijzigt u daar ook maar één
+    #      spatie, dan weigert de browser dat script en blijft de pagina
+    #      zonder melding hangen op de klasse .js of het laadscherm.
+    #
+    #      Nieuwe hash berekenen (vanuit de projectmap):
+    #        python3 -c "import hashlib,base64,re,sys; \
+    #          s=open('index.html',encoding='utf-8').read(); \
+    #          [print(base64.b64encode(hashlib.sha256(x.encode()).digest()).decode()) \
+    #           for x in re.findall(r'<script(?![^>]*src=)(?![^>]*ld\+json)[^>]*>(.*?)</script>',s,re.S)]"
+    #
+    #  'unsafe-inline' bij style-src is niet te vermijden: GSAP animeert door
+    #  inline style-attributen te schrijven. Bij script-src staat het er juist
+    #  níét — daar doen de twee hashes het werk, en dat is precies de plek waar
+    #  een CSP waarde heeft.
+    # ------------------------------------------------------------------------
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-GrEltXIxjd1OuRlksxFCHDFAm8UyhXSn7vV0nLj7FwU='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
+
+
+# ============================================================================
+#  Caching
+# ----------------------------------------------------------------------------
+#  Bewust alleen voor bestanden die nooit meer veranderen. styles.css, js/ en
+#  vendor/ dragen geen versie in hun naam, dus die houden de standaardinstelling
+#  van Netlify (ETag + opnieuw valideren): een herhaalbezoek kost dan een klein
+#  304-antwoord, maar een uitrol is meteen zichtbaar. Zou daar een lange
+#  cachetijd op staan, dan kan een bezoeker nieuwe HTML met oude CSS krijgen.
+# ============================================================================
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    # De bestandsnaam legt het lettertype én de variant vast; wijzigt het
+    # lettertype, dan wijzigt de naam. Daarom mag hij een jaar blijven staan.
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/og-elleven.png"
+  [headers.values]
+    # Wordt alleen opgehaald door sociale netwerken en zoekmachines.
+    Cache-Control = "public, max-age=604800"
