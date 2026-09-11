@@ -1,0 +1,999 @@
+/**
+ * Bron van alle styling voor de Elleven-website.
+ *
+ * Bouwen: vanuit ../../build  ->  `npm run build`  (uitvoer: ../../styles.css)
+ *
+ * Deze regels stonden tot september 2026 als een <style>-blok in index.html.
+ * Ze zijn hierheen verplaatst zodat er één bron van waarheid voor styling is en
+ * index.html alleen nog structuur bevat. De custom CSS staat bewust buiten
+ * @layer, zodat hij altijd wordt meegenomen en — net als vroeger — ná de
+ * Tailwind-utilities komt.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Lettertype
+   --------------------------------------------------------------------------
+   Inter stond tot september 2026 als <link> naar fonts.googleapis.com in de
+   <head>. Drie redenen om hem hierheen te halen:
+
+     1. Die link is een stylesheet en dus renderblokkerend, én hij staat op een
+        vreemde server. De browser moet er eerst DNS en TLS voor opzetten vóór
+        er iets op het scherm mag. Is die server traag of onbereikbaar, dan
+        wacht de hele pagina mee — in onze eigen meting kostte dat ruim een
+        seconde aan First Contentful Paint.
+     2. Er werden vijf gewichten opgevraagd (400 t/m 800). De site gebruikt er
+        drie: 400, 500 en 600.
+     3. Bij het opvragen van een lettertype bij Google gaat het IP-adres van de
+        bezoeker mee naar een derde partij. Voor een Belgische site die in zijn
+        eigen FAQ over GDPR schrijft, is dat een slecht te verdedigen detail.
+
+   Het is één variabel bestand (47 kB) dat alle gewichten van 100 tot 900 dekt —
+   kleiner dan de drie losse gewichten samen (71 kB) en één verzoek in plaats van
+   drie. Bewust géén preload: Inter staat vierde in de stapel hieronder, dus op
+   een Mac of iPhone wordt hij nooit gebruikt. Een @font-face laadt alleen
+   wanneer er tekst is die hem echt nodig heeft; een preload zou die 47 kB ook
+   naar Apple-toestellen sturen die er niets mee doen.
+
+   Inter valt onder de SIL Open Font License; de licentie staat in
+   fonts/inter-LICENSE.txt.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;          /* variabel bestand: alle gewichten in één file */
+  font-display: swap;            /* nooit onzichtbare tekst tijdens het laden */
+  /* De versie staat in de bestandsnaam. Dat is geen franje: fonts/ krijgt in
+     netlify.toml een cachetijd van een jaar, en die mag alleen als een nieuwe
+     versie ook een nieuwe URL krijgt. Anders houdt een terugkerende bezoeker
+     het oude bestand een jaar vast. Bij een upgrade wijzigt build:fonts in
+     build/package.json mee. */
+  src: url('fonts/inter-latin-wght-5.3.0.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+                 U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC,
+                 U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ==========================================================================
+   Basis
+   ========================================================================== */
+
+html {
+  scrollbar-gutter: stable;
+  /* Compenseert de vaste navbar bij het springen naar een anker. Wordt door
+     js/nav.js opnieuw gebruikt als offset voor het geanimeerde scrollen. */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, .font-heading {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+}
+
+::selection {
+  background: #39ff9e;
+  color: #000000;
+}
+
+/* Dunne, donkere scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #000000; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.26); }
+
+/* Zachte tik-feedback op alle pilvormige knoppen/badges, zoals iOS/macOS-controls */
+.rounded-full { transition: transform .15s ease, opacity .15s ease; }
+.rounded-full:active { transform: scale(0.97); }
+
+/* ==========================================================================
+   Scroll-animaties
+   --------------------------------------------------------------------------
+   De verborgen begintoestand hangt bewust aan .js op <html>, dat direct in de
+   <head> wordt gezet. Laadt of draait JavaScript niet, dan blijft alle inhoud
+   dus gewoon zichtbaar in plaats van onzichtbaar te blijven hangen.
+   js/reveal.js animeert deze elementen met GSAP ScrollTrigger; .in-view is de
+   terugvalklasse die alles alsnog toont als GSAP niet beschikbaar is.
+   ========================================================================== */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.reveal.in-view {
+  opacity: 1;
+  transform: none;
+  transition: opacity .7s ease, transform .7s ease;
+}
+
+.reveal.d1 { transition-delay: .08s; }
+.reveal.d2 { transition-delay: .16s; }
+.reveal.d3 { transition-delay: .24s; }
+.reveal.d4 { transition-delay: .32s; }
+
+/* --------------------------------------------------------------------------
+   Woordmaskers in sectiekoppen.
+   js/secties.js knipt de kop in losse woorden en wikkelt elk woord in deze twee
+   laagjes, zodat ze één voor één van achter een rand omhoog kunnen schuiven.
+   Gebeurt dat splitsen niet — geen JavaScript, of een fout — dan staat de kop
+   hier gewoon als normale tekst; deze regels doen dan niets.
+   -------------------------------------------------------------------------- */
+
+.anim-woord {
+  display: inline-block;
+  overflow: hidden;
+  /* Vangnet voor lange samenstellingen. Een woord als "standaardtemplate." is op
+     een smal scherm breder dan zijn kolom; als inline-block breekt het niet
+     vanzelf af en loopt het onder de sectierand door. Met deze twee regels mag
+     het alsnog afbreken in plaats van te worden afgesneden. */
+  max-width: 100%;
+  /* Ruimte voor accenten en staartletters, zonder de regelhoogte te veranderen. */
+  padding-block: 0.06em 0.12em;
+  margin-block: -0.06em -0.12em;
+  vertical-align: bottom;
+}
+.anim-woord-in {
+  display: inline-block;
+  max-width: 100%;
+  /* hyphens eerst: een lang woord breekt dan mét koppelteken op een geldige
+     lettergreepgrens (de pagina staat op lang="nl", dus Nederlandse regels).
+     overflow-wrap is het laatste redmiddel als afbreken niet lukt. */
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   Accentlijn bovenaan elke sectie: tekent zich vanuit het midden open zodra de
+   sectie in beeld komt. Puur decoratief — de bestaande border-t blijft de
+   eigenlijke scheiding, dus als dit niet animeert mist er niets wezenlijks.
+   -------------------------------------------------------------------------- */
+
+[data-sectielijn]::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(57,255,158,0.45), rgba(34,211,238,0.4), transparent);
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(.22,1,.36,1);
+}
+[data-sectielijn].lijn-in::before { transform: scaleX(1); }
+
+/* ==========================================================================
+   HERO
+   --------------------------------------------------------------------------
+   De entree draait op pure CSS en bewust niet op GSAP. De hero staat boven de
+   vouw en bevat het grootste tekstelement van de pagina; zou die op JavaScript
+   wachten, dan wacht de Largest Contentful Paint mee — een meetbare vertraging
+   in de laadscore, en een lege hero voor wie traag internet heeft.
+   GSAP (js/hero.js) komt er daarna overheen voor wat CSS niet goed kan:
+   muisparallax, magnetische knoppen en het wegdrijven bij het scrollen.
+
+   Alle beweging hier gebruikt uitsluitend transform en opacity, zodat de
+   browser niets opnieuw hoeft te berekenen aan de lay-out.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: 92vh;
+  min-height: 92svh; /* houdt rekening met de adresbalk op mobiel */
+  padding-block: 5.5rem 3rem;
+}
+
+@media (min-width: 640px) {
+  .hero { padding-block: 7.5rem 4.5rem; }
+}
+
+/* ------------------------------------------------------------ achtergrond -- */
+
+/* Zachte, traag zwevende lichtvlekken. Puur sfeer, staat los van de
+   muisparallax zodat beide niet om dezelfde eigenschap vechten. */
+.hero-orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(90px);
+  will-change: transform;
+}
+.hero-orb-1 {
+  top: -14%; left: 50%;
+  width: 34rem; height: 34rem;
+  margin-left: -17rem;
+  background: radial-gradient(circle, rgba(57,255,158,0.22), transparent 68%);
+  animation: orbZweef1 19s ease-in-out infinite alternate;
+}
+.hero-orb-2 {
+  top: 18%; right: -8%;
+  width: 26rem; height: 26rem;
+  background: radial-gradient(circle, rgba(34,211,238,0.18), transparent 68%);
+  animation: orbZweef2 23s ease-in-out infinite alternate;
+}
+.hero-orb-3 {
+  bottom: -12%; left: -6%;
+  width: 24rem; height: 24rem;
+  background: radial-gradient(circle, rgba(139,92,246,0.16), transparent 70%);
+  animation: orbZweef3 27s ease-in-out infinite alternate;
+}
+@keyframes orbZweef1 { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(2%,4%,0) scale(1.09); } }
+@keyframes orbZweef2 { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(-4%,3%,0) scale(1.06); } }
+@keyframes orbZweef3 { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(3%,-3%,0) scale(1.08); } }
+
+/* Op een telefoon zonder schaling. Een sterk vervaagd vlak dat groeit moet de
+   browser bij elke stap opnieuw uittekenen — verschuiven kan de grafische chip
+   alleen. Dezelfde zweving, een fractie van de kosten, en de orbs zijn ook
+   kleiner en minder vervaagd omdat er simpelweg minder scherm is. */
+@keyframes orbZweefM1 { from { transform: translate3d(0,0,0); } to { transform: translate3d(3%,5%,0); } }
+@keyframes orbZweefM2 { from { transform: translate3d(0,0,0); } to { transform: translate3d(-5%,4%,0); } }
+@keyframes orbZweefM3 { from { transform: translate3d(0,0,0); } to { transform: translate3d(4%,-4%,0); } }
+
+@media (max-width: 767px) {
+  .hero-orb { filter: blur(58px); }
+  .hero-orb-1 { width: 21rem; height: 21rem; margin-left: -10.5rem; animation-name: orbZweefM1; }
+  .hero-orb-2 { width: 17rem; height: 17rem; right: -14%; animation-name: orbZweefM2; }
+  .hero-orb-3 { width: 16rem; height: 16rem; left: -12%; animation-name: orbZweefM3; }
+}
+
+/* Het merkteken als groot watermerk rechtsonder: herkenbaar aanwezig zonder de
+   tekst in de weg te zitten. Ruim uitvergroot en licht vervaagd, zodat het leest
+   als een lichtprojectie en niet als drie losse vormen. Op smallere schermen is
+   er geen ruimte voor en verdwijnt het. */
+.hero-merk {
+  display: none;
+  position: absolute;
+  right: -9rem;
+  bottom: -11rem;
+  width: 50rem;
+  opacity: 0.042;
+  filter: blur(2px);
+  pointer-events: none;
+  will-change: transform;
+}
+@media (min-width: 1024px) {
+  .hero-merk { display: block; }
+}
+
+/* ---------------------------------------------------------------- entree -- */
+
+@keyframes heroOp {
+  from { opacity: 0; transform: translate3d(0, 26px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Regel- en woordmaskers: de tekst schuift omhoog van achter een onzichtbare
+   rand vandaan. Dat is de kinetische beweging, en ze kost niets omdat er
+   alleen getransformeerd wordt. */
+@keyframes heroRegel {
+  from { transform: translate3d(0, 110%, 0); }
+  to   { transform: none; }
+}
+
+.hero-op {
+  opacity: 0;
+  animation: heroOp .85s cubic-bezier(.22,1,.36,1) both;
+  animation-delay: var(--vertraging, 0s);
+}
+
+.hero-titel {
+  font-size: clamp(2.05rem, 7.2vw, 4.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+  /* Verdeelt de woorden gelijkmatiger wanneer een regel toch afbreekt, vooral
+     op smalle schermen. Browsers die dit niet kennen, breken gewoon normaal af. */
+  text-wrap: balance;
+}
+
+/* De maskers. Let op de aparte klassen voor de binnenste elementen: een
+   selector als ".hero-regel > span" zou óók de woord-wrappers hieronder raken
+   en die op display:block zetten, waardoor elk woord op een eigen regel belandt. */
+.hero-regel {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.06em 0.1em;
+  margin-block: -0.06em -0.1em;
+}
+
+/* De regel die uit losse woorden bestaat maskeert per woord, dus hier mag niets
+   worden afgesneden — anders verdwijnen woorden die naar een tweede regel lopen. */
+.hero-regel-woorden { overflow: visible; }
+
+.hero-woord {
+  display: inline-block;
+  overflow: hidden;
+  padding-block: 0.06em 0.1em;
+  margin-block: -0.06em -0.1em;
+  vertical-align: bottom;
+}
+
+.hero-regel-in,
+.hero-woord-in {
+  transform: translate3d(0, 110%, 0);
+  animation: heroRegel .95s cubic-bezier(.22,1,.36,1) both;
+  /* Losse regel, ná de verkorte animation-notatie: die zet animation-delay
+     anders terug op nul en zou de tijdlijnklassen hieronder overrulen. */
+  animation-delay: var(--vertraging, 0s);
+}
+.hero-regel-in { display: block; }
+.hero-woord-in { display: inline-block; }
+
+/* Eén tijdlijn voor de hele hero, zodat de volgorde in één oogopslag te lezen is.
+   Via een custom property, want die is niet gevoelig voor de specificiteit van
+   de animation-notatie hierboven. */
+.hero-t1  { --vertraging: .05s; }
+.hero-t2  { --vertraging: .13s; }
+.hero-t3  { --vertraging: .21s; }
+.hero-t4  { --vertraging: .30s; }
+.hero-t5  { --vertraging: .39s; }
+.hero-t6  { --vertraging: .46s; }
+.hero-t7  { --vertraging: .52s; }
+.hero-t8  { --vertraging: .58s; }
+.hero-t9  { --vertraging: .68s; }
+.hero-t10 { --vertraging: .78s; }
+
+/* ------------------------------------------------------------------ knoppen -- */
+
+.hero-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  will-change: transform;
+}
+
+/* Lichtveeg die bij hover over de knop trekt. */
+.hero-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.45) 50%, transparent 65%);
+  transform: translate3d(-130%, 0, 0);
+  transition: transform .7s cubic-bezier(.22,1,.36,1);
+}
+.hero-cta:hover::after,
+.hero-cta:focus-visible::after { transform: translate3d(130%, 0, 0); }
+
+.hero-cta-pijl { transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.hero-cta:hover .hero-cta-pijl { transform: translate3d(4px, 0, 0); }
+
+/* Tweede knop: rand licht op en een glasvlak schuift binnen. */
+.hero-cta-tweede::after {
+  background: rgba(255,255,255,0.06);
+  transform: translate3d(0, 101%, 0);
+  transition: transform .45s cubic-bezier(.22,1,.36,1);
+}
+.hero-cta-tweede:hover::after,
+.hero-cta-tweede:focus-visible::after { transform: none; }
+
+/* ------------------------------------------------------------ scroll-hint -- */
+
+.hero-hint span {
+  display: block;
+  width: 1px;
+  height: 2.25rem;
+  background: linear-gradient(to bottom, transparent, rgba(57,255,158,0.8), transparent);
+  animation: hintZak 2.4s ease-in-out infinite;
+}
+@keyframes hintZak {
+  0%, 100% { transform: scaleY(0.4); transform-origin: top; opacity: .35; }
+  50%      { transform: scaleY(1);   transform-origin: top; opacity: 1; }
+}
+
+/* Holografische, licht bewegende gradient-tekst */
+.text-gradient {
+  background: linear-gradient(100deg, #39ff9e 0%, #22d3ee 50%, #39ff9e 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 10s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==========================================================================
+   Achtergrond: aurora-nevels, vignet en grid
+   ========================================================================== */
+
+/* Vignette: donkere randen voor diepte, laat het middelste vlak (waar de content leest) met rust */
+.vignette {
+  background: radial-gradient(ellipse 80% 65% at 50% 35%, transparent 45%, rgba(0,0,0,0.55) 100%);
+}
+
+/* Aurora-nevels: zachte, langzaam driftende gekleurde gloed-vlekken (galaxy-sfeer) */
+.aurora { position: absolute; border-radius: 9999px; filter: blur(105px); mix-blend-mode: screen; opacity: 0.62; }
+.aurora-a { top: -12%; left: -10%; width: 44rem; height: 44rem; background: radial-gradient(circle at 30% 30%, rgba(57,255,158,0.55), transparent 70%); animation: driftA 28s ease-in-out infinite alternate; }
+.aurora-b { top: 2%; right: -14%; width: 38rem; height: 38rem; background: radial-gradient(circle at 60% 40%, rgba(139,92,246,0.5), transparent 70%); animation: driftB 34s ease-in-out infinite alternate; }
+.aurora-c { bottom: -18%; left: 6%; width: 40rem; height: 40rem; background: radial-gradient(circle at 50% 50%, rgba(34,211,238,0.4), transparent 70%); animation: driftC 31s ease-in-out infinite alternate; }
+.aurora-d { bottom: -10%; right: 2%; width: 32rem; height: 32rem; background: radial-gradient(circle at 50% 50%, rgba(244,114,182,0.38), transparent 70%); animation: driftD 25s ease-in-out infinite alternate; }
+@keyframes driftA { from { transform: translate(0,0) scale(1); } to { transform: translate(6%,8%) scale(1.12); } }
+@keyframes driftB { from { transform: translate(0,0) scale(1); } to { transform: translate(-8%,6%) scale(1.06); } }
+@keyframes driftC { from { transform: translate(0,0) scale(1); } to { transform: translate(5%,-7%) scale(1.1); } }
+@keyframes driftD { from { transform: translate(0,0) scale(1); } to { transform: translate(-6%,-9%) scale(1.14); } }
+
+/* Subtiel grid-patroon op achtergrond */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* Op mobiel: kleinere, scherpere en feller gekleurde nevels — op een smal scherm valt een grote,
+   sterk vervaagde vlek anders bijna weg. Ook de vignet iets lichter, zodat de kleur niet dichtslibt. */
+@media (max-width: 640px) {
+  .aurora { opacity: 0.8; filter: blur(65px); }
+  .aurora-a { width: 24rem; height: 24rem; top: -10%; left: -18%; }
+  .aurora-b { width: 22rem; height: 22rem; top: 6%; right: -20%; }
+  .aurora-c { width: 22rem; height: 22rem; bottom: -12%; left: -16%; }
+  .aurora-d { width: 19rem; height: 19rem; bottom: -6%; right: -14%; }
+  .vignette { background: radial-gradient(ellipse 95% 75% at 50% 30%, transparent 55%, rgba(0,0,0,0.45) 100%); }
+
+  /* Zelfde reden als bij de hero-orbs: verschuiven mag, schalen niet. Vier
+     vervaagde vlakken die tijdens het scrollen blijven groeien en krimpen is op
+     een telefoon de duurste laag van de pagina, terwijl het verschil met alleen
+     verschuiven op dit formaat niet te zien is. */
+  .aurora-a { animation-name: driftMa; }
+  .aurora-b { animation-name: driftMb; }
+  .aurora-c { animation-name: driftMc; }
+  .aurora-d { animation-name: driftMd; }
+}
+@keyframes driftMa { from { transform: translate(0,0); } to { transform: translate(7%,9%); } }
+@keyframes driftMb { from { transform: translate(0,0); } to { transform: translate(-9%,7%); } }
+@keyframes driftMc { from { transform: translate(0,0); } to { transform: translate(6%,-8%); } }
+@keyframes driftMd { from { transform: translate(0,0); } to { transform: translate(-7%,-10%); } }
+
+/* ==========================================================================
+   Componenten
+   ========================================================================== */
+
+/* Glasspanelen: subtiel vlak licht + gefrost-glass effect */
+.glass {
+  background: rgba(255,255,255,0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Op een telefoon staan er ruim dertig van deze panelen op de pagina, en elk
+   backdrop-filter dwingt de browser de achtergrond eronder apart af te nemen en
+   te vervagen — tijdens het scrollen, opnieuw, voor elk paneel. Dat is de
+   zwaarste post van de hele mobiele pagina.
+   In plaats daarvan een echt donker vlak: geen filter, en de tekst staat
+   bovendien op een rustiger ondergrond dan op de doorschijnende sterrenhemel.
+   Dat leest bij daglicht op een klein scherm beter dan het gefrost-glaseffect. */
+@media (max-width: 767px) {
+  .glass {
+    background: rgba(24,24,27,0.72);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ==========================================================================
+   LAADSCHERM
+   --------------------------------------------------------------------------
+   Wordt alleen getoond wanneer het inline script in de <head> de klasse .laadt
+   op <html> zet: eerste bezoek van de sessie, geen bewegingsvoorkeur, en
+   JavaScript beschikbaar. In alle andere gevallen staat hij op display:none en
+   bestaat hij visueel niet.
+
+   De inhoud van de pagina staat er gewoon onder — dit is een laag erbovenop, geen
+   vervanging. Zoekmachines lezen de volledige HTML; er wordt niets verborgen of
+   uitgesteld in de DOM.
+   ========================================================================== */
+
+.laad-scherm { display: none; }
+
+.laadt .laad-scherm,
+.laad-scherm.laad-scherm-zichtbaar {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 200;           /* boven navbar (50), zweefknop (60) en cursorring (80) */
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(60% 45% at 50% 45%, rgba(57,255,158,0.07), transparent 70%),
+    #000000;
+  will-change: transform;
+}
+
+/* Zodra het paneel begint weg te schuiven mogen kliks er alweer doorheen: de
+   pagina eronder is dan al opgebouwd en hoort meteen bruikbaar te zijn. */
+.laad-scherm-weg { pointer-events: none; }
+
+.laad-merk {
+  width: 86px;
+  height: 86px;
+}
+@media (min-width: 768px) {
+  .laad-merk { width: 104px; height: 104px; }
+}
+
+/* De opbouw van het merkteken draait op CSS en niet op GSAP. Dat is bewust: de
+   overlay verschijnt bij het eerste beeld, maar GSAP en de modules moeten nog
+   binnenkomen. Zou de animatie op JavaScript wachten, dan kijkt iemand met een
+   trage verbinding eerst een paar tienden van een seconde naar een leeg zwart
+   vlak. Nu begint het merkteken meteen. GSAP doet alleen de uitloop. */
+
+.laadt .laad-balk {
+  transform: scaleY(0);
+  /* transform-box: fill-box is hier niet optioneel. Zonder die regel rekent een
+     SVG-element zijn transform-origin uit tegenover de viewBox in plaats van
+     tegenover zichzelf: de balken zouden dan groeien vanuit de onderrand van het
+     hele merkteken en de punt vanuit het midden daarvan, in plaats van elk vanuit
+     hun eigen hart. */
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: laadBalk .3s cubic-bezier(.22,1,.36,1) both;
+}
+.laadt .laad-balk:nth-of-type(2) { animation-delay: .07s; }
+
+.laadt .laad-stip {
+  transform: scale(0);
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: laadStip .26s cubic-bezier(.34,1.4,.64,1) .2s both;
+}
+
+@keyframes laadBalk { to { transform: scaleY(1); } }
+@keyframes laadStip { to { transform: scale(1); } }
+
+/* Op een telefoon korter en zonder trapje: daar telt elke tiende seconde zwaarder. */
+@media (max-width: 767px) {
+  .laadt .laad-balk { animation-duration: .24s; }
+  .laadt .laad-balk:nth-of-type(2) { animation-delay: 0s; }
+  .laadt .laad-stip { animation-duration: .2s; animation-delay: .14s; }
+}
+
+/* De hero staat stil zolang het laadscherm ervoor hangt, zodat zijn opbouw
+   begint op het moment dat het paneel wegschuift in plaats van erachter te
+   verdwijnen. Het vangnet in de <head> haalt .laadt er hoe dan ook weer af. */
+.laadt .hero-op,
+.laadt .hero-regel-in,
+.laadt .hero-woord-in { animation-play-state: paused; }
+
+/* ==========================================================================
+   MICRO-INTERACTIES
+   --------------------------------------------------------------------------
+   Alles hier is bewust klein. Een micro-interactie hoort te bevestigen dat er
+   iets gebeurt; merk je hem op als effect, dan is hij te groot.
+
+   De cursorring staat NAAST de systeemcursor, niet in plaats daarvan — zie de
+   toelichting bovenaan js/micro.js. Hij bestaat alleen op apparaten met een
+   echte aanwijzer en wordt door JavaScript aangemaakt, dus bezoekers zonder
+   JavaScript of met een aanraakscherm krijgen hem nooit te zien.
+   ========================================================================== */
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 9999px;
+  border: 1px solid rgba(57,255,158,0.45);
+  background: rgba(57,255,158,0.04);
+  pointer-events: none;   /* mag nooit een klik onderscheppen */
+  z-index: 80;            /* onder de navbar (50) uit, boven de inhoud */
+  opacity: 0;
+  transition: opacity .25s ease, border-color .25s ease, background-color .25s ease;
+  will-change: transform;
+}
+.cursor-ring-aan { opacity: 1; }
+
+/* Boven iets klikbaars: voller en feller. De grootte doet GSAP via scale,
+   zodat er niets herberekend hoeft te worden aan de lay-out. */
+.cursor-ring-actief {
+  border-color: rgba(57,255,158,0.85);
+  background: rgba(57,255,158,0.1);
+}
+
+/* Boven een invoerveld verdwijnt de ring: daar hoort de tekstcursor het beeld
+   te bepalen, en een ring eromheen leest als ruis. */
+.cursor-ring-uit { opacity: 0 !important; }
+
+/* Alleen actief wanneer VERBERG_NATIVE_CURSOR in js/micro.js aanstaat. */
+.cursor-verborgen,
+.cursor-verborgen * { cursor: none !important; }
+
+/* ------------------------------------------------------ links ---------- */
+
+/* Onderstreping die vanuit één kant inloopt en aan de andere kant weer
+   uitloopt. Transform-only, dus geen herberekening. */
+.link-onder {
+  position: relative;
+}
+.link-onder::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform .4s cubic-bezier(.22,1,.36,1);
+}
+.link-onder:hover::after,
+.link-onder:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* ------------------------------------------------- aanraakschermen ----- */
+
+@media (hover: none) {
+  /* Het blauwe vlak dat mobiele browsers over een aangeraakt element leggen
+     past bij geen enkele huisstijl. We vervangen het door eigen terugkoppeling
+     die wél bij de site past. */
+  a, button, summary, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+  /* Terugkoppeling via kleur en rand, niet via transform: op de kaarten en het
+     werkvoorbeeld staat al een inline transform van GSAP, en die zou een
+     :active-transform hier gewoon overrulen. */
+  .dienst:active { border-color: rgba(57,255,158,0.45); }
+  details.faq summary:active { background: rgba(255,255,255,0.05); }
+}
+
+/* Bezoekers met een bewegingsvoorkeur krijgen de ring niet (js/micro.js draait
+   dan niet) en zien de onderstreping meteen in plaats van inlopend. */
+@media (prefers-reduced-motion: reduce) {
+  .link-onder::after { transition: none; }
+}
+
+/* ==========================================================================
+   DIENSTENKAARTEN
+   --------------------------------------------------------------------------
+   De kaarten kantelen licht naar de muis toe en krijgen een gloed die de cursor
+   volgt. Dat kantelen doet js/diensten.js met GSAP; hier staat bewust géén
+   transform op :hover, anders vechten CSS en GSAP om dezelfde eigenschap.
+   CSS verzorgt wat GSAP niet hoeft te doen: rand, schaduw, kleuraccenten.
+
+   Op een aanraakscherm bestaat hover niet. Daar zet js/diensten.js de klasse
+   .dienst-actief op de kaart die in beeld staat, en die klasse schakelt exact
+   dezelfde accenten in. Vandaar dat elke hover-regel hieronder een tweelingregel
+   met .dienst-actief heeft.
+   ========================================================================== */
+
+/* Het perspectief zet js/diensten.js per kaart (transformPerspective), zodat
+   elke kaart om zijn eigen midden kantelt in plaats van om een gedeeld punt
+   ver buiten het raster — dat oogt rustiger bij vijf kaarten naast elkaar. */
+
+.dienst {
+  position: relative;
+  isolation: isolate;
+  transition: border-color .4s ease, box-shadow .4s ease, background-color .4s ease;
+}
+
+/* Dunne lichtlijn langs de bovenrand, als accent bij aandacht. */
+.dienst::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 24px; right: 24px;
+  height: 1px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, rgba(57,255,158,0.7), transparent);
+  opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+
+.dienst:hover,
+.dienst.dienst-actief {
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 26px 60px -28px rgba(0,0,0,0.75), 0 0 46px -22px rgba(57,255,158,0.28);
+}
+.dienst:hover::after,
+.dienst.dienst-actief::after { opacity: 1; }
+
+/* Gloed die de cursor volgt. De positie komt via --mx en --my uit JavaScript;
+   zonder die waarden staat hij netjes bovenaan in het midden, wat precies de
+   plek is die op een aanraakscherm wordt gebruikt. */
+.dienst-glans {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s ease;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%),
+              rgba(57,255,158,0.13), rgba(34,211,238,0.05) 45%, transparent 70%);
+}
+.dienst:hover .dienst-glans,
+.dienst.dienst-actief .dienst-glans { opacity: 1; }
+
+.dienst-inhoud {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Titel en tekst zakken naar de onderkant van de kaart. Daardoor staan de
+   pictogrammen op één lijn bovenaan en de titels op één lijn onderaan, ook al
+   verschillen de teksten in lengte — en vult de bredere eerste kaart zijn
+   ruimte zonder dat er een leeg vlak onder blijft hangen. */
+.dienst-tekst {
+  margin-top: auto;
+  padding-top: 2.75rem;
+}
+
+/* Die uitlijning bestaat alleen omdat de kaarten naast elkaar staan. Op een
+   telefoon staan ze onder elkaar, is er niets om op één lijn te brengen, en
+   kost die marge alleen maar zes keer 44 px extra scrollen. */
+@media (max-width: 767px) {
+  .dienst-tekst { padding-top: 1.25rem; }
+}
+
+/* Websites is de basis van elk pakket en krijgt daarom op brede schermen — waar
+   de kaart twee kolommen inneemt — ook typografisch meer gewicht. */
+@media (min-width: 1024px) {
+  .dienst-uitgelicht .dienst-tekst h3 { font-size: 1.75rem; line-height: 1.2; }
+  .dienst-uitgelicht .dienst-tekst p { font-size: 1.0625rem; }
+}
+
+.dienst-icoon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: 2.75rem;
+  width: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  transition: border-color .4s ease, transform .45s cubic-bezier(.22,1,.36,1);
+}
+.dienst:hover .dienst-icoon,
+.dienst.dienst-actief .dienst-icoon {
+  border-color: rgba(57,255,158,0.35);
+  transform: translateY(-2px);
+}
+
+/* Het volgnummer. Tabulaire cijfers houden de breedte gelijk terwijl het
+   nummer omhoogtelt, zodat er niets verspringt. */
+.dienst-nummer {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: rgba(255,255,255,0.22);
+  font-variant-numeric: tabular-nums;
+  transition: color .4s ease;
+}
+.dienst:hover .dienst-nummer,
+.dienst.dienst-actief .dienst-nummer { color: rgba(57,255,158,0.8); }
+
+.card-hover { transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .35s ease, box-shadow .35s ease; }
+.card-hover:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 30px 70px -24px rgba(0,0,0,0.7), 0 0 50px -20px rgba(57,255,158,0.25), 0 0 80px -30px rgba(34,211,238,0.2);
+}
+
+/* FAQ: native <details> zonder standaard-driehoekje, met draaiend plus-icoon */
+details.faq summary { list-style: none; cursor: pointer; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary:focus-visible { outline: 2px solid #39ff9e; outline-offset: 2px; border-radius: 1rem; }
+.faq-icon { transition: transform .25s ease; }
+details.faq[open] .faq-icon { transform: rotate(45deg); }
+
+/* Foutmelding van het contactformulier moet duidelijk als fout lezen,
+   niet in dezelfde groene 'geslaagd'-kleur. */
+.form-status-error { color: #ff6b6b; }
+
+/* Zwevende WhatsApp-knop: verschijnt zodra bezoeker voorbij de hero scrolt,
+   zodat contact opnemen op elk moment één tik verwijderd is. */
+.wa-fab {
+  position: fixed;
+  right: 18px;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #39ff9e, #22d3ee);
+  color: #000;
+  box-shadow: 0 8px 24px -6px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(16px) scale(0.9);
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease, width .25s ease, box-shadow .25s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.wa-fab svg { width: 26px; height: 26px; flex: none; margin-inline: 15px; }
+.wa-fab-label { max-width: 0; opacity: 0; font-size: 14px; font-weight: 600; transition: max-width .25s ease, opacity .2s ease, margin .25s ease; }
+.wa-fab.wa-fab-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.wa-fab:hover, .wa-fab:focus-visible {
+  width: 172px;
+  box-shadow: 0 10px 28px -6px rgba(0,0,0,0.55), 0 0 30px -6px rgba(57,255,158,0.5);
+}
+.wa-fab:hover svg, .wa-fab:focus-visible svg { margin-inline: 15px 4px; }
+.wa-fab:hover .wa-fab-label, .wa-fab:focus-visible .wa-fab-label { max-width: 120px; opacity: 1; margin-right: 16px; }
+.wa-fab:active { transform: scale(0.96); }
+@media (max-width: 480px) {
+  .wa-fab { right: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ==========================================================================
+   MOBIEL
+   --------------------------------------------------------------------------
+   Wat hier staat is geen verkleinde desktop maar een aparte keuze voor een
+   scherm dat je met één duim bedient. De rest van dit bestand is mobile-first
+   geschreven; dit blok verzamelt de plekken waar een telefoon iets anders nodig
+   heeft dan een muis en een groot venster.
+
+   Drie dingen die hier geregeld worden:
+     1. raakvlakken van minstens 44 px — de maat die Apple en Google allebei
+        aanhouden als ondergrens voor betrouwbaar aantikken;
+     2. geen hover-afhankelijke effecten, want op een aanraakscherm blijft een
+        :hover-toestand na het tikken hangen;
+     3. rust in de beweging tijdens het scrollen.
+   ========================================================================== */
+
+/* ------------------------------------------------------------ typografie -- */
+
+/* Sectiekoppen staan op text-4xl: 36 px. Dat werkt vanaf een kleine telefoon,
+   maar op 320 px is één Nederlandse samenstelling dan al breder dan de kolom.
+   Daarom schaalt de kop hier mee met het scherm in plaats van op één maat te
+   blijven staan — 30 px op 320 px, 36 px zodra er ruimte voor is. */
+@media (max-width: 639px) {
+  .text-4xl { font-size: clamp(1.9rem, 8.4vw, 2.25rem); line-height: 1.12; }
+}
+
+/* En het vangnet daaronder. Nederlands maakt lange samenstellingen —
+   "standaardtemplate.", "aanspreekpunt," — en zo'n woord doet in een raster
+   meer dan alleen over de rand steken: de kolom wordt minstens zo breed als
+   het langste ondeelbare woord, dus één woord duwt de hele kolom buiten beeld.
+   hyphens: auto breekt netjes op een lettergreep in browsers met een
+   Nederlands woordenboek (Safari op iOS heeft dat). anywhere is het vangnet
+   voor de rest, en telt — anders dan break-word — wél mee in die
+   minimumbreedte, waardoor de kolom weer normaal kan krimpen. */
+@media (max-width: 639px) {
+  h1, h2, h3, .anim-woord-in, .hero-woord-in {
+    hyphens: auto;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ------------------------------------------------------ raakvlakken (44 px) -- */
+
+/* Voettekstlinks stonden op de hoogte van hun tekst: 16 px hoog, terwijl ze
+   3 px uit elkaar stonden. Nu is elke link een rij van 44 px. De onderlinge
+   marge kan daardoor weg — de hoogte zelf zorgt voor de ruimte. */
+/* Op (hover: none) en niet op een schermbreedte: een tablet in liggende stand is
+   breed én wordt met een vinger bediend. De breedte zegt niets over het
+   aanwijsapparaat; deze query wel. */
+/* De onderlinge marge staat hier en niet als space-y-2 in de HTML, zodat de
+   mobiele regel hieronder hem kan resetten zonder specificiteitstrucs. */
+.voet-lijst > li + li { margin-top: 0.5rem; }
+
+@media (hover: none) {
+  .voet-lijst > li + li { margin-top: 0; }
+  .voet-link,
+  .voet-lijst > li {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  /* Het merk in de kop en de voettekst: de tekst is 32 px hoog, dus er komt
+     boven en onder wat ruimte bij in plaats van breedte. inline-flex houdt het
+     raakvlak bij het logo zelf in plaats van over de hele regel. */
+  .merk-link {
+    display: inline-flex;
+    padding-block: 6px;
+  }
+
+  /* De navigatielinks in de kop staan alleen op brede schermen, maar een tablet
+     in liggende stand valt daar ook onder — en dan wil je ze wel kunnen raken. */
+  header nav a.link-onder {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* ------------------------------------------------------------- bento-tegels -- */
+
+/* De brede tegels in "waarom" zetten pictogram en tekst naast elkaar. Dat is een
+   keuze voor een tegel die twee rasterkolommen breed is. Op een telefoon staat
+   diezelfde tegel alleen, en dan perst die opzet de tekst in een kolom van nog
+   geen tweehonderd pixels naast een pictogram dat in het niets zweeft. Daar
+   stapelen ze, net als de kleine tegels — dezelfde bouwsteen, een andere vorm. */
+@media (max-width: 767px) {
+  .tegel-breed {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+/* ------------------------------------------------ ruimte voor de zweefknop -- */
+
+/* De WhatsApp-knop staat vast rechtsonder in beeld. Onderaan de pagina komt hij
+   daardoor over de laatste regel van de voettekst te liggen. Een telefoon heeft
+   die knop het hardst nodig, dus die blijft — maar de voettekst krijgt er wel
+   ruimte onder bij, zodat er niets meer onder de knop verdwijnt. */
+@media (max-width: 767px) {
+  footer { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* --------------------------------------------------- tik in plaats van hover -- */
+
+/* Op een aanraakscherm bestaat :hover niet echt: de browser laat de toestand na
+   het tikken staan tot je ergens anders tikt. Een kaart die dan omhoog blijft
+   hangen leest als een fout. De kaarten hebben hun eigen zichtbaarheidsspel via
+   .dienst-actief (js/diensten.js), dat wel bij een aanraakscherm past. */
+@media (hover: none) {
+  .card-hover:hover { transform: none; }
+  .wa-fab:hover { width: 56px; }
+  .wa-fab:hover .wa-fab-label { max-width: 0; opacity: 0; margin-right: 0; }
+  .wa-fab:hover svg { margin-inline: 15px; }
+}
+
+/* ==========================================================================
+   Bewegingsvoorkeur
+   --------------------------------------------------------------------------
+   Bezoekers die minder beweging willen, krijgen alle inhoud meteen te zien.
+   js/reveal.js hanteert dezelfde voorkeur via gsap.matchMedia(), want GSAP
+   houdt zich niet vanzelf aan deze CSS-regel.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal,
+  .reveal { transition: none; opacity: 1; transform: none; }
+
+  /* De hero staat meteen compleet en stil: geen maskers, geen zwevende
+     lichtvlekken, geen lichtveeg over de knoppen. Let op de volgorde — deze
+     regels moeten de begintoestanden hierboven overschrijven, anders blijft de
+     tekst achter zijn masker hangen zodra de animatie is uitgezet. */
+  .hero-op,
+  .hero-regel-in,
+  .hero-woord-in { opacity: 1; transform: none; animation: none; }
+
+  .hero-cta::after,
+  .hero-cta-tweede::after { display: none; }
+
+  .hero-hint { display: none !important; }
+
+  /* js/secties.js draait onder deze voorkeur helemaal niet, dus de woordmaskers
+     en de accentlijn moeten hier zelf hun eindtoestand krijgen. */
+  .anim-woord-in { transform: none; opacity: 1; }
+  [data-sectielijn]::before { transform: none; transition: none; }
+
+  /* De dienstenkaarten reageren nog steeds zichtbaar op aandacht, maar zonder
+     beweging: alleen kleur en rand, geen verschuiving. */
+  .dienst:hover .dienst-icoon,
+  .dienst.dienst-actief .dienst-icoon { transform: none; }
+
+  .wa-fab { transition: opacity .2s ease; transform: none !important; }
+
+  * { animation: none !important; }
+}
