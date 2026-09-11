@@ -64,9 +64,19 @@
 
 html {
   scrollbar-gutter: stable;
-  /* Compenseert de vaste navbar bij het springen naar een anker. Wordt door
-     js/nav.js opnieuw gebruikt als offset voor het geanimeerde scrollen. */
+  /* Compenseert de vaste navbar bij het springen naar een anker — ook voor
+     scrollIntoView() in js/nav.js, dat scroll-padding respecteert. */
   scroll-padding-top: 5rem;
+}
+
+/* Native, door de browser bestuurde smooth scroll voor ankerlinks (zie
+   js/nav.js). Bewust alleen hier gezet, niet doorlopend aan: dit botste eerder
+   met de gepinde werkwijze-tijdlijn, maar nu er nergens meer gepind wordt kan
+   de browser dit weer gewoon zelf afhandelen — inclusief het direct kunnen
+   onderbreken zodra de bezoeker zelf scrolt, wat GSAP's eigen scrollTo nooit
+   zo betrouwbaar deed. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 body {
@@ -588,25 +598,26 @@ h1, h2, h3, .font-heading {
   position: fixed;
   top: 0;
   left: 0;
-  width: 34px;
-  height: 34px;
-  margin: -17px 0 0 -17px;
+  /* Bewust een kleine, volle stip in plaats van een grote ring — die viel te
+     nadrukkelijk op en volgde de muis te opvallend. Dit blijft een accent,
+     geen tweede cursor. */
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
   border-radius: 9999px;
-  border: 1px solid rgba(57,255,158,0.45);
-  background: rgba(57,255,158,0.04);
+  background: rgba(57,255,158,0.75);
   pointer-events: none;   /* mag nooit een klik onderscheppen */
   z-index: 80;            /* onder de navbar (50) uit, boven de inhoud */
   opacity: 0;
-  transition: opacity .25s ease, border-color .25s ease, background-color .25s ease;
+  transition: opacity .25s ease, background-color .25s ease;
   will-change: transform;
 }
 .cursor-ring-aan { opacity: 1; }
 
-/* Boven iets klikbaars: voller en feller. De grootte doet GSAP via scale,
-   zodat er niets herberekend hoeft te worden aan de lay-out. */
+/* Boven iets klikbaars: een fractie feller, niet groter dan nodig om nog als
+   subtiel te lezen. De grootte doet GSAP via scale in js/micro.js. */
 .cursor-ring-actief {
-  border-color: rgba(57,255,158,0.85);
-  background: rgba(57,255,158,0.1);
+  background: rgba(57,255,158,1);
 }
 
 /* Boven een invoerveld verdwijnt de ring: daar hoort de tekstcursor het beeld
@@ -771,21 +782,6 @@ h1, h2, h3, .font-heading {
   border-color: rgba(57,255,158,0.35);
   transform: translateY(-2px);
 }
-
-/* Het volgnummer. Tabulaire cijfers houden de breedte gelijk terwijl het
-   nummer omhoogtelt, zodat er niets verspringt. */
-.dienst-nummer {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  color: rgba(255,255,255,0.22);
-  font-variant-numeric: tabular-nums;
-  transition: color .4s ease;
-}
-.dienst:hover .dienst-nummer,
-.dienst.dienst-actief .dienst-nummer { color: rgba(57,255,158,0.8); }
 
 .card-hover { transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .35s ease, box-shadow .35s ease; }
 .card-hover:hover {
